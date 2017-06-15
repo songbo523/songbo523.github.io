@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ios中assign、copy 、retain、strong、weak的区别 | songbook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="assgin、retain、copy引用计数 在ObjC中每个对象内部都有一个与之对应的整数（retainCount），叫“引用计数器”，当一个对象在创建之后它的引用计数器为1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器自动在原来的基础上加1（ObjC中调用一个对象的方法就是给这个对象发送一个消息），当调用这个对象的release方法之后它的引用计数器减1，如果一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ios中assign、copy 、retain、strong、weak的区别">
+<meta property="og:url" content="http://yoursite.com/2017/06/07/ios中assign、copy-、retain、strong、weak的区别/index.html">
+<meta property="og:site_name" content="songbook">
+<meta property="og:description" content="assgin、retain、copy引用计数 在ObjC中每个对象内部都有一个与之对应的整数（retainCount），叫“引用计数器”，当一个对象在创建之后它的引用计数器为1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器自动在原来的基础上加1（ObjC中调用一个对象的方法就是给这个对象发送一个消息），当调用这个对象的release方法之后它的引用计数器减1，如果一">
+<meta property="og:updated_time" content="2017-06-07T01:50:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ios中assign、copy 、retain、strong、weak的区别">
+<meta name="twitter:description" content="assgin、retain、copy引用计数 在ObjC中每个对象内部都有一个与之对应的整数（retainCount），叫“引用计数器”，当一个对象在创建之后它的引用计数器为1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器自动在原来的基础上加1（ObjC中调用一个对象的方法就是给这个对象发送一个消息），当调用这个对象的release方法之后它的引用计数器减1，如果一">
+  
+    <link rel="alternate" href="/atom.xml" title="songbook" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">songbook</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ios中assign、copy-、retain、strong、weak的区别" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/07/ios中assign、copy-、retain、strong、weak的区别/" class="article-date">
+  <time datetime="2017-06-07T01:33:42.000Z" itemprop="datePublished">2017-06-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ios中assign、copy 、retain、strong、weak的区别
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>assgin、retain、copy<br>引用计数</p>
+<p>在ObjC中每个对象内部都有一个与之对应的整数（retainCount），叫“引用计数器”，当一个对象在创建之后它的引用计数器为1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器自动在原来的基础上加1（ObjC中调用一个对象的方法就是给这个对象发送一个消息），当调用这个对象的release方法之后它的引用计数器减1，如果一个对象的引用计数器为0，则系统会自动调用这个对象的dealloc方法来销毁这个对象。</p>
+<p>比较</p>
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>引用计数</th>
+<th>set方法处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>assign</td>
+<td>不变</td>
+<td>直接赋值</td>
+</tr>
+<tr>
+<td>retain</td>
+<td>＋1</td>
+<td>先release原来到值，再retain新值</td>
+</tr>
+<tr>
+<td>copy</td>
+<td>＋1</td>
+<td>先release原来到值，再copy新值</td>
+</tr>
+</tbody>
+</table>
+<p>对于设置了关键字的属性a：</p>
+<p>@property (nonatomic,关键字) NSObject *a;<br>当使用了不同的关键字后自动实现的set方法：</p>
+<p>assign<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-(<span class="keyword">void</span>)setA:(<span class="keyword">int</span>)a&#123;</div><div class="line">        _a=a;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>retain<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">-(<span class="keyword">void</span>)setA:(Car *)a&#123;</div><div class="line">       <span class="keyword">if</span>(_a!=a)&#123;</div><div class="line">           [_a release];</div><div class="line">           _a=[a <span class="keyword">retain</span>];</div><div class="line">       &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>copy<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">-(<span class="keyword">void</span>)setA:(<span class="built_in">NSString</span> *)a&#123;</div><div class="line">       <span class="keyword">if</span>(_a!=a)&#123;</div><div class="line">          [_a release];</div><div class="line">          _a=[a <span class="keyword">copy</span>];</div><div class="line">       &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>深拷贝(mutableCopy)和浅拷贝(copy)：</p>
+<p>深拷贝就是内容拷贝，浅拷贝就是指针拷贝。</p>
+<p>copy vs retain</p>
+<p>retain和strong都是指针拷贝。当有其他对象引用当前对象时，会拷贝一份当前对象的地址，这样它就也指向当前对象了。所以，还是同一个对象，只是retainCount+1；</p>
+<p>copy:对于不可变对象copy采用的是浅复制，引用计数器加1（其实这是编译器进行了优化，既然原来的对象不可变，复制之后的对象也不可变那么就没有必要再重新创建一个对象了）；对于可变对象copy采用的是深复制，引用计数器不变（原来的对象是可变，现在要产生一个不可变的当然得重新产生一个对象）；<br>浅复制如下：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span> *str1 = <span class="string">@"123"</span>;</div><div class="line"><span class="built_in">NSString</span> *str2 = [str1 <span class="keyword">copy</span>];</div></pre></td></tr></table></figure></p>
+<p>ARC<br>ARC是自iOS 5之后增加的新特性，完全消除了手动管理内存的烦琐，编译器会自动在适当的地方插入适当的retain、release、autorelease语句。你不再需要担心内存管理,因为编译器为你处理了一切。</p>
+<p>强引用和弱引用</p>
+<p>强引用：当前对象被其他对象引用时，会执行retain操作，引用计数器+1。当retainCount=0时，该对象才会被销毁。因为我们要进行对象的内存管理，所以这是默认的引用方式。（默认是强引用）</p>
+<p>弱引用：当前对象的生命周期不被是否由其他对象引用限制，它本该什么时候销毁就什么时候被销毁。即使它的引用没断，但是当它的生存周期到了时就会被销毁。</p>
+<p>在定义属性时，若声明为retain类型的，则就是强引用；若声明为assign类型的，则就是弱引用。后来内存管理都由ARC来完成后，若是强引用，则就声明为strong；若是弱引用，则就声明为weak。</p>
+<p>所以说，retain和strong是一致的（声明为强引用）；assign和weak是基本一致的（声明为弱引用）。之所以说它俩是基本一致是因为它俩还是有所不同的，weak严格的说应当叫“归零弱引用”，即当对象被销毁后，会自动的把它的指针置为nil，这样可以防止野指针错误。而assign销毁对象后不会把该对象的指针置nil，对象已经被销毁，但指针还在痴痴的指向它，这就成了野指针，这是比较危险的。</p>
+<p>避免“强引用循环“的僵局：</p>
+<p>　　默认的引用方式是强引用，但上面说了有时我们还得使用弱引用，那是什么情况呢？</p>
+<p>　　答案，强引用循环：A对象强引用了B对象，B对象也强引用了A。因为都是强引用，也就是无论是A是B都要在对方的引用断了后才能销毁，但要断了引用，就必须对方对象销毁。就会出现这种僵局，为了避免出现这种情况，就应该有一个对象“示弱”，使其为“弱引用”。</p>
+<p>　　比较常见的，视图中的父子视图之间的引用：父视图强引用子视图，子视图弱引用父视图。</p>
+<p>总结：由于要进行内存管理的缘故，OC里的引用默认都是强引用，但为了避免出现”强引用循环僵局“，所以有了弱引用（assign）。</p>
+<hr>
+<p>举个例子：</p>
+<p>常见的写法：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">@property</span>(atomic,<span class="keyword">retain</span>,<span class="keyword">readwrite</span>) Dog *dog;</div></pre></td></tr></table></figure></p>
+<p>1、第一个位置的值：<br>atomic:线程保护的，默认<br>nonatomic:线程不保护的<br>2、第二个位置的值：<br>assign:直接赋值，默认<br>retain:保留对象,内部会自动调用retain方法，引用计数+1<br>copy:拷贝对象<br>3、第三个位置的值：<br>readwrite:生成get/set方法，默认<br>readonly:只生成get方法<br>主要是第二位置的值不易区分，接下来我们看看</p>
+<p>1.关于assign、copy 、retain等关键字之间含义和区别？</p>
+<p>assign： 简单赋值，不更改索引计数<br>copy： 建立一个索引计数为1的对象，然后释放旧对象<br>retain：释放旧的对象，将旧对象的值赋予输入对象，再提高输入对象的索引计数为1<br>区别:<br>Copy其实是建立了一个相同的对象，而retain不是：<br>比如: 一个NSString对象，地址为0×1111，内容为@”STR”<br>Copy到另外一个NSString之 后，开辟一片新内存空间来存储，地址为0×2222，内容相同，新的对象retain为1， 旧有对象没有变化<br>retain到另外一个NSString之 后，地址相同（建立一个指针，指针拷贝），内容当然相同，这个对象的retain值+1<br>也就是说，retain是指针拷贝，copy是内容拷贝。在拷贝之前，都会释放旧的对象。</p>
+<p>使用assign: 对基础数据类型 （NSInteger）和C数据类型（int, float, double, char,等）<br>使用copy： 对NSString<br>使用retain： 对其他NSObject和其子类<br>举个例子:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NSString *houseOfMM = [[NSString alloc] initWithString:'北京别墅房'];</div></pre></td></tr></table></figure></p>
+<p>上面一段代码会执行以下两个动作:<br>1 在堆上分配一段内存用来存储@”北京别墅房 “ ,比如:内存地址为 0X1111 内容为 ‘“北京别墅房” ，<br>2 在栈上分配一段内存用来存储 houseOfMM ,比如:地址为 0XAAAA 内容自然为 0X1111 下面分别看下(assign,retain,copy):<br>1.assign的情况:<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span>  * myHouse  = [ houseOfMM   <span class="keyword">assign</span> ];</div></pre></td></tr></table></figure></p>
+<p>此时 myHouse 和 houseOfMM 完全相同,地址都是 0XAAAA ,<br>内容为 0X1111 ,即 myHouse 只是 houseOfMM 的别名,对任何一个操作就等于对另一个操作。<br>因此 retainCount 不需要增加.(同进同出，关系好，一把钥匙，给我拿着)</p>
+<p>2.retain的情况：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span>  *  myHouse  = [ houseOfMM   <span class="keyword">retain</span> ];</div></pre></td></tr></table></figure></p>
+<p>此时 myHouse 的地址不再为 0XAAAA ,可能为 0XAABB ,但是内容依然为 0X1111 .<br>因此 myHouse 和 houseOfMM 都可以管理’ 北京别墅房 ‘所在的内存。<br>因此 retainCount 需要增加1.（有些独立，各自进出，两把钥匙）<br>3.copy的情况：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span>  *  myHouse  = [ houseOfMM   <span class="keyword">copy</span> ];</div></pre></td></tr></table></figure></p>
+<p>此时会在堆上重新开辟一段内存存放@’北京别墅房’,比如0X1122,<br>内容为@’北京别墅房’,同时会在栈上为myHouse分配空间,比如地址:0XAACC,内容为0X1122,<br>因此retainCount增加1供myHouse来管理0X1122这段内存.(两套@’北京别墅房’)</p>
+<p>注： ARC中的strong相当于非ARC中的retain，ARC来了以后多搞一把钥匙就strong了啦。</p>
+<p>看到这，或许有人会上文中对栈和堆的有些疑惑， 接下来是转一位大神很经典的谈栈和堆，来一起看看，更能理解上面的含义：</p>
+<p>一、预备知识—程序的内存分配</p>
+<p>一个由C/C++编译的程序占用的内存分为以下几个部分<br>1、栈区（stack）— 由编译器自动分配释放 ，存放函数的参数值，局部变量的值等。其 操作方式类似于数据结构中的栈。</p>
+<p>2、堆区（heap） — 一般由程序员分配释放， 若程序员不释放，程序结束时可能由OS回收 。注意它与数据结构中的堆是两回事，分配方式倒是类似于链表</p>
+<p>3、全局区（静态区）（static）—，全局变量和静态变量的存储是放在一块的，初始化的全局变量和静态变量在一块区域， 未初始化的全局变量和未初始化的静态变量在相邻的另 一块区域。 - 程结束后由系统释放。</p>
+<p>4、文字常量区 —常量字符串就是放在这里的。 程序结束后由系统释放</p>
+<p>5、程序代码区—存放函数体的二进制代码。</p>
+<p>二、例子程序</p>
+<p>这是一个前辈写的，非常详细</p>
+<p>  //main.cpp<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span>   a   =   <span class="number">0</span>;   全局初始化区   </div><div class="line"><span class="keyword">char</span>   *p1;   全局未初始化区   </div><div class="line">main()   </div><div class="line">&#123;   </div><div class="line"><span class="keyword">int</span>   b;   栈   </div><div class="line"><span class="keyword">char</span>   s[]   =   <span class="string">"abc"</span>;   栈   </div><div class="line"><span class="keyword">char</span>   *p2;   栈   </div><div class="line"><span class="keyword">char</span>   *p3   =   <span class="string">"123456"</span>;   <span class="number">123456</span>/<span class="number">0</span>在常量区，p3在栈上。   </div><div class="line"><span class="keyword">static</span>   <span class="keyword">int</span>   c   =<span class="number">0</span>；   全局（静态）初始化区   </div><div class="line">p1   =   (<span class="keyword">char</span>   *)malloc(<span class="number">10</span>);   </div><div class="line">p2   =   (<span class="keyword">char</span>   *)malloc(<span class="number">20</span>);   </div><div class="line">分配得来得<span class="number">10</span>和<span class="number">20</span>字节的区域就在堆区。   </div><div class="line">strcpy(p1,   <span class="string">"123456"</span>);   <span class="number">123456</span>/<span class="number">0</span>放在常量区，编译器可能会将它与p3所指向的<span class="string">"123456"</span> </div><div class="line">优化成一个地方。   </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>三、堆和栈的理论知识</p>
+<p>2.1申请方式</p>
+<p>stack:<br>由系统自动分配。 例如，声明在函数中一个局部变量 int b; 系统自动在栈中为b开辟空间<br>heap:<br>需要程序员自己申请，并指明大小，在c中malloc函数<br>如p1 = (char *)malloc(10);<br>在C++中用new运算符<br>如p2 = new char[10];<br>但是注意p1、p2本身是在栈中的。</p>
+<p>2.2 申请后系统的响应</p>
+<p>栈：只要栈的剩余空间大于所申请空间，系统将为程序提供内存，否则将报异常提示栈溢 出。<br>堆：首先应该知道操作系统有一个记录空闲内存地址的链表，当系统收到程序的申请时， 会遍历该链表，寻找第一个空间大于所申请空间的堆结点，然后将该结点从空闲结点链表 中删除，并将该结点的空间分配给程序，另外，对于大多数系统，会在这块内存空间中的 首地址处记录本次分配的大小，这样，代码中的delete语句才能正确的释放本内存空间。<br>另外，由于找到的堆结点的大小不一定正好等于申请的大小，系统会自动的将多余的那部分重新放入空闲链表中。</p>
+<p>2.3 申请大小的限制</p>
+<p>栈：在Windows下,栈是向低地址扩展的数据结构，是一块连续的内存的区域。这句话的意思是栈顶的地址和栈的最大容量是系统预先规定好的，在WINDOWS下，栈的大小是2M（也有 的说是1M，总之是一个编译时就确定的常数），如果申请的空间超过栈的剩余空间时，将 提示overflow。因此，能从栈获得的空间较小。</p>
+<p>堆：堆是向高地址扩展的数据结构，是不连续的内存区域。这是由于系统是用链表来存储 的空闲内存地址的，自然是不连续的，而链表的遍历方向是由低地址向高地址。堆的大小受限于计算机系统中有效的虚拟内存。由此可见，堆获得的空间比较灵活，也比较大。</p>
+<p>2.4 申请效率的比较：</p>
+<p>栈由系统自动分配，速度较快。但程序员是无法控制的。<br>堆是由new分配的内存，一般速度比较慢，而且容易产生内存碎片,不过用起来最方便.<br>另外，在WINDOWS下，最好的方式是用VirtualAlloc分配内存，他不是在堆，也不是在栈是<br>直接在进程的地址空间中保留一块内存，虽然用起来最不方便。但是速度快，也最灵活。</p>
+<p>2.5 堆和栈中的存储内容</p>
+<p>栈： 在函数调用时，第一个进栈的是主函数中后的下一条指令（函数调用语句的下一条可<br>执行语句）的地址，然后是函数的各个参数，在大多数的C编译器中，参数是由右往左入栈<br>的，然后是函数中的局部变量。注意静态变量是不入栈的。<br>当本次函数调用结束后，局部变量先出栈，然后是参数，最后栈顶指针指向最开始存的地<br>址，也就是主函数中的下一条指令，程序由该点继续运行。<br>堆：一般是在堆的头部用一个字节存放堆的大小。堆中的具体内容由程序员安排。</p>
+<p>2.6存取效率的比较<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span>   s1[]   =   <span class="string">"aaaaaaaaaaaaaaa"</span>;   </div><div class="line"><span class="keyword">char</span>   *s2   =   <span class="string">"bbbbbbbbbbbbbbbbb"</span>;</div></pre></td></tr></table></figure></p>
+<p>aaaaaaaaaaa是在运行时刻赋值的；<br>而bbbbbbbbbbb是在编译时就确定的；<br>但是，在以后的存取中，在栈上的数组比指针所指向的字符串(例如堆)快。</p>
+<p>比如：</p>
+<pre><code class="obj-c"><span class="meta">#include   </span>
+<span class="keyword">void</span>   main()   
+{   
+<span class="keyword">char</span>   a   =   <span class="number">1</span>;   
+<span class="keyword">char</span>   c[]   =   <span class="string">"1234567890"</span>;   
+<span class="keyword">char</span>   *p   =<span class="string">"1234567890"</span>;   
+a   =   c[<span class="number">1</span>];   
+a   =   p[<span class="number">1</span>];   
+<span class="keyword">return</span>;   
+}
+</code></pre>
+<p>  对应的汇编代码<br>  10:   a   =   c[1];<br>  00401067   8A   4D   F1   mov   cl,byte   ptr   [ebp-0Fh]<br>  0040106A   88   4D   FC   mov   byte   ptr   [ebp-4],cl<br>  11:   a   =   p[1];<br>  0040106D   8B   55   EC   mov   edx,dword   ptr   [ebp-14h]<br>  00401070   8A   42   01   mov   al,byte   ptr   [edx+1]<br>  00401073   88   45   FC   mov   byte   ptr   [ebp-4],al<br>  第一种在读取时直接就把字符串中的元素读到寄存器cl中，而第二种则要先把指针值读到<br>  edx中，再根据edx读取字符，显然慢了。<br>2.7小结：</p>
+<p>堆和栈的区别可以用如下的比喻来看出：<br>使用栈就象我们去饭馆里吃饭，只管点菜（发出申请）、付钱、和吃（使用），吃饱了就走，不必理会切菜、洗菜等准备工作和洗碗、刷锅等扫尾工作，他的好处是快捷，但是自由度小。<br>使用堆就象是自己动手做喜欢吃的菜肴，比较麻烦，但是比较符合自己的口味，而且自由度大。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/07/ios中assign、copy-、retain、strong、weak的区别/" data-id="cj3xytx400006arfyzym7vl2w" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/06/07/Technology-blog/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Technology blog
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/07/OS中break、continue、return三者的区别/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">OS中break、continue、return三者的区别</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/06/14/沙盒文件以及沙盒文件路径、和本地存储/">沙盒文件以及沙盒文件路径、和本地存储</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/13/NSArray的基本使用/">NSArray的基本使用</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/13/Programmer-English-Vocabulary/">Programmer English Vocabulary</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/07/iOS-UIKit框架/">iOS UIKit框架</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/07/Technology-blog/">Technology blog</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 songbo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

@@ -61,10 +61,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-沙盒文件以及沙盒文件路径、和本地存储" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2017/06/15/hello-world/" class="article-date">
-  <time datetime="2017-06-15T04:38:33.000Z" itemprop="datePublished">2017-06-15</time>
+    <a href="/2017/06/14/沙盒文件以及沙盒文件路径、和本地存储/" class="article-date">
+  <time datetime="2017-06-14T08:51:34.000Z" itemprop="datePublished">2017-06-14</time>
 </a>
     
   </div>
@@ -75,7 +75,2457 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/15/hello-world/">Hello World</a>
+      <a class="article-title" href="/2017/06/14/沙盒文件以及沙盒文件路径、和本地存储/">沙盒文件以及沙盒文件路径、和本地存储</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一、iOS中的沙盒机制</p>
+<p>iOS应用程序只能对自己创建的文件系统读取文件，这个独立、封闭、安全的空间，叫做沙盒。每个ios应用都有自己的应用沙盒，应用沙盒就是文件系统目录，与其他应用的文件系统隔离。它一般存放着程序包文件（可执行文件）、图片、音频、视频、plist文件、sqlite数据库以及其他文件。每个应用程序都有自己的独立的存储空间（沙盒）一般来说应用程序之间是不可以互相访问的，在ios8中已经开放访问，模拟器沙盒的位置路径：/User/userName/Library/Application Support/iPhone Simulator；当我们创建应用程序时，在每个沙盒中含有三个文件，分别是Document、Library（下面有Caches和Preferences目录）和temp。<br>应用程序包：包含所有的资源文件和可执行文件。</p>
+<p>二、对Document、Library（下面有Caches和Preferences目录）和temp做简单介绍</p>
+<p>1.Document：一般需要持久的数据都放在此目录中，可以在当中添加子文件夹，iTunes备份和恢复的时候，会包括此目录。</p>
+<p>2.Library：设置程序的默认设置和其他状态信息，iTunes会自动备份该目录，例如杂志、新闻、地图应用使用的数据库缓存文件和可下载内容应该保存到这个文件夹。一般可以重新下载或者重新生成的数据应该保存在 <application_home>/Library/Caches 目录下面。<br>Libaray/Caches:存放缓存文件，iTunes不会备份此目录，此目录下文件不会在应用退出删除。一般存放体积比较大，不是特别重要的资源。<br>Libaray/PreferencePanes:保存应用的所有偏好设置，ios的Settings（设置）应用会在该目录中查找应用的设置信息，iTunes会自动备份该目录。</application_home></p>
+<p>3.temp：创建临时文件的目录，当iOS设备重启时，文件会被自动清除，只是临时使用的数据应该保存到 <application_home>/tmp 文件夹。iCloud 不会备份这些文件，下次启动应用自动删除。</application_home></p>
+<p>三、获取沙盒路径</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Home目录  </span></div><div class="line"><span class="built_in">NSString</span> *homeDirectory = <span class="built_in">NSHomeDirectory</span>();   </div><div class="line"></div><div class="line"><span class="comment">//Document目录  </span></div><div class="line"><span class="built_in">NSArray</span> *paths = <span class="built_in">NSSearchPathForDirectoriesInDomains</span>(<span class="built_in">NSDocumentDirectory</span>, <span class="built_in">NSUserDomainMask</span>, <span class="literal">YES</span>);     </div><div class="line"><span class="built_in">NSString</span> *path = [paths objectAtIndex:<span class="number">0</span>];     </div><div class="line"></div><div class="line"><span class="comment">//Cache目录  </span></div><div class="line"><span class="built_in">NSArray</span> *paths = <span class="built_in">NSSearchPathForDirectoriesInDomains</span>(<span class="built_in">NSCachesDirectory</span>, <span class="built_in">NSUserDomainMask</span>, <span class="literal">YES</span>);     </div><div class="line"><span class="built_in">NSString</span> *path = [paths objectAtIndex:<span class="number">0</span>];     </div><div class="line"></div><div class="line"><span class="comment">//PreferencePanes目录  </span></div><div class="line"><span class="built_in">NSArray</span> *paths = <span class="built_in">NSSearchPathForDirectoriesInDomains</span>(<span class="built_in">NSPreferencePanesDirectory</span>, <span class="built_in">NSUserDomainMask</span>, <span class="literal">YES</span>);  </div><div class="line"><span class="built_in">NSString</span> *path = [paths objectAtIndex:<span class="number">0</span>];  </div><div class="line"></div><div class="line"><span class="comment">//Libaray目录NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);     </span></div><div class="line"><span class="built_in">NSString</span> *path = [paths objectAtIndex:<span class="number">0</span>];     </div><div class="line"></div><div class="line"><span class="comment">//tmp目录   </span></div><div class="line"><span class="built_in">NSString</span> *tmpDir = <span class="built_in">NSTemporaryDirectory</span>();</div></pre></td></tr></table></figure>
+<p>四、本地存储</p>
+<p>1、plist存储</p>
+<p>• 把一些系统自带的OC对象生成pilst文件存储起来。<br>1&gt; 了解数据存储：数据存储一般有两个操作，一个存，一个取。拖两个按钮，一个用来存，一个用来取<br>2&gt; plist存储原理：<br>• 只要有writeToFile的对象，就能进行plist存储，调用writeToFile就能自动生成plist格式的文件。<br>• 一般常用的Foundation对象都有这个方法，数组，字典，字符串等<br>3&gt; 如何写入到沙盒，需要获取沙盒路径。<br>• 获取Documents路径<br>• 拼接文件名，因为数据是写入到文件中，不是写入到文件夹中。路径之间通过/分开的，为了避免自己写/，会用stringByAppendingPathCompent，自动在文件夹与文件之间添加/。<br>4&gt; 如何读取，存储是什么类型存储，读取出来也是什么类型，直接用存储的类型，解析文件就好，用ContentsOfFile解析。<br>5&gt; 注意plist存储，不能存储自定义对象，会失败的。</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//    1.获取home路径</span></div><div class="line">    <span class="built_in">NSArray</span> *paths = <span class="built_in">NSSearchPathForDirectoriesInDomains</span>(<span class="built_in">NSDocumentDirectory</span>, <span class="built_in">NSUserDomainMask</span>, <span class="literal">YES</span>);</div><div class="line">    <span class="built_in">NSString</span> *path = [paths objectAtIndex:<span class="number">0</span>];</div><div class="line"><span class="comment">//    2.拼接路径创建plist文件</span></div><div class="line">    <span class="built_in">NSString</span> *docPath = [path stringByAppendingPathComponent:<span class="string">@"2.plist"</span>];</div><div class="line"><span class="comment">//    3.创建一个数组,存储数据到plist文件中</span></div><div class="line">    <span class="built_in">NSArray</span> *persons = @[<span class="string">@"zhangsan"</span>,<span class="string">@"lisi"</span>,<span class="string">@"王六"</span>];</div><div class="line"><span class="comment">//    4.把数据写入到文件中</span></div><div class="line">   [ persons writeToFile:docPath atomically:<span class="literal">YES</span>];</div><div class="line"><span class="comment">//  5.读取文件的内容（注意存的是什么，用什么格式接收）</span></div><div class="line">    <span class="built_in">NSArray</span>* readArray = [<span class="built_in">NSArray</span> arrayWithContentsOfFile:docPath];</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,readArray);</div></pre></td></tr></table></figure>
+<p>2、偏好设置</p>
+<p>1&gt; 什么是偏好设置存储：就是保存一些基本的信息，账号，密码，状态。<br>    2&gt; 偏好设置原理：不需要关心文件名，直接通过NSUserDefaults操作，默认就存到偏好设置里面了。<br>    • 通过NSUserDefaults就能直接访问软件的偏好设置(Library/Preferences)<br>    3&gt; 怎么利用偏好设置存储?利用NSUserDefaults调用setObject:forKey存储。<br>    • 偏好设置底层实现原理：底层其实就是利用一个字典，存储一些键值对。<br>    • 偏好设置好处：能快速存储一些键值对，如果用字典去存储，还需要获取文件名比较麻烦。<br>    • 偏好设置坏处：不能及时存储，需要做同步操作，把内存中的数据同步到硬盘上。<br>    4&gt; 怎么利用偏好设置读取?和字典一样，根据刚刚存储的Key读取。<br>//使用偏好设置(存储数据)</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//   1,获取Default对象,通过这个对象来存储数据</span></div><div class="line">    <span class="built_in">NSUserDefaults</span> *userDefault = [<span class="built_in">NSUserDefaults</span> standardUserDefaults];</div><div class="line"><span class="comment">//    2.通过这个对象来存储数据</span></div><div class="line">    [userDefault setObject:<span class="string">@"zhangsan"</span> forKey:<span class="string">@"name"</span>];</div><div class="line">    [userDefault setObject:<span class="string">@"163.com"</span> forKey:<span class="string">@"email"</span>];</div><div class="line">    [userDefault setBool:<span class="literal">YES</span> forKey:<span class="string">@"gender"</span>];</div><div class="line"><span class="comment">//    3.立即同步</span></div><div class="line">    [userDefault synchronize];</div><div class="line"><span class="comment">//取数据</span></div><div class="line"><span class="comment">//    1.获取Default对象</span></div><div class="line">    <span class="built_in">NSUserDefaults</span> *userDefault = [<span class="built_in">NSUserDefaults</span> standardUserDefaults];</div><div class="line"><span class="comment">//    2.通过这个对象来读取数据</span></div><div class="line">    <span class="built_in">NSString</span> *name =  [userDefault objectForKey:<span class="string">@"name"</span>];</div><div class="line">    <span class="built_in">NSString</span> *email = [userDefault objectForKey:<span class="string">@"email"</span>];</div><div class="line">    <span class="built_in">BOOL</span> gender = [userDefault boolForKey:<span class="string">@"gender"</span>];</div><div class="line"><span class="comment">////    3.同步</span></div><div class="line">    [userDefault synchronize];</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@----%@---%d"</span>,name,email,gender);</div></pre></td></tr></table></figure>
+<p>3、自定义对象归档(归档：数据存储)</p>
+<p>1&gt; 自定义对象如何归档：用NSKeyedArchiver,调用archiveRootObject:toFile:方法，需要传一个对象，自定义一个对象，传进去。<br>• 会报错,说对象没有encodeWithCoder方法，说明归档的时候默认会调用这个方法，去实现这个方法。<br>• 默认打不出encodeWithCoder，必须遵守NSCoding协议才能实现这个方法。<br>• encodeWithCoder什么时候调用：对象归档时候调用<br>• encodeWithCoder作用：告诉系统对象里的哪些属性需要归档，怎么去归档，根据一个key去归档，目的就是以后取的时候，也根据这个key去取数据。<br>2&gt; 自定义对象如何解档:用NSKeyedUnarchiver,调用unarchiveObjectWithFile方法，需要传一个文件名。<br>• 会报错,说对象没有initWithCoder方法，说明解档的时候默认会调用这个方法，去实现这个方法。<br>• initWithCoder什么时候调用：对象解档时候调用<br>• initWithCoder作用：告诉系统对象里的哪些属性需要解档，怎么去解档，根据之前存储的key去解档<br>• initWithCoder是一个初始化方法，需要先初始化父类的，但是不能调用[super initWithCoder:],因为父类NSObject没有遵守NSCoding协议。<br>3&gt; initWithCoder什么时候需要调用[super initWithCoder:]<br>• initWithCoder原理:只要解析文件就会调用，xib,storyboard都是文件，因此只要解析这两个文件，就会调用initWithCoder。<br>• 因此如果在storyboard使用自定义view,重写initWithCoder方法，一定要调用[super initWithCoder:]，因为只有系统才知道怎么解析storyboard，如果没有调用，就解析不了这个文件。</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">"HMPerson.h"</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">HMPerson</span></span></div><div class="line"><span class="comment">//用来告诉系统怎么来存储数据(告诉系统各个字段怎么进行存储)</span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)encodeWithCoder:(<span class="built_in">NSCoder</span> *)aCoder&#123;</div><div class="line">    [aCoder encodeObject:<span class="keyword">self</span>.name forKey:<span class="string">@"name"</span>];</div><div class="line">    [aCoder encodeObject:<span class="keyword">self</span>.email forKey:<span class="string">@"email"</span>];</div><div class="line">    [aCoder encodeInteger:<span class="keyword">self</span>.age forKey:<span class="string">@"age"</span>];</div><div class="line"></div><div class="line">&#125;</div><div class="line"><span class="comment">//通过这个方法来实现怎么读取数据</span></div><div class="line">- (<span class="keyword">instancetype</span>)initWithCoder:(<span class="built_in">NSCoder</span> *)aDecoder&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</div><div class="line">       <span class="keyword">self</span>.name =  [aDecoder decodeObjectForKey:<span class="string">@"name"</span>];</div><div class="line">        <span class="keyword">self</span>.email = [aDecoder decodeObjectForKey:<span class="string">@"email"</span>];</div><div class="line">        <span class="keyword">self</span>.age =  [aDecoder decodeIntForKey:<span class="string">@"age"</span>];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"><span class="comment">//点击屏幕的时候就会调用这个方法</span></div><div class="line">- (<span class="keyword">void</span>)touchesBegan:(<span class="built_in">NSSet</span>&lt;<span class="built_in">UITouch</span> *&gt; *)touches withEvent:(<span class="built_in">UIEvent</span> *)event&#123;</div><div class="line"></div><div class="line"><span class="comment">//  1.创建对象</span></div><div class="line">    HMPerson *person = [[HMPerson alloc]init];</div><div class="line">    person.name = <span class="string">@"zhansan"</span>;</div><div class="line">    person.email = <span class="string">@"1234@qq.com"</span>;</div><div class="line">    person.age = <span class="number">30</span>;</div><div class="line"><span class="comment">//    2.存储对象(通过NSKeyedArchiver存储数据)</span></div><div class="line">    [<span class="built_in">NSKeyedArchiver</span> archiveRootObject:person toFile:[<span class="keyword">self</span> getDataPath]];</div><div class="line"><span class="comment">//    3.读取数据</span></div><div class="line">    [<span class="keyword">self</span> readData];</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"><span class="comment">//读取数据</span></div><div class="line">- (<span class="keyword">void</span>)readData&#123;</div><div class="line">   HMStudent *student = [<span class="built_in">NSKeyedUnarchiver</span> unarchiveObjectWithFile:[<span class="keyword">self</span> getDataPath]];</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@---%@--%d--%@"</span>,student.name,student.email,student.age,student.studentId);</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="built_in">NSString</span> *)getDataPath&#123;</div><div class="line"><span class="comment">//    1.获取路径</span></div><div class="line">    <span class="built_in">NSString</span> *docPath = [<span class="built_in">NSSearchPathForDirectoriesInDomains</span>(<span class="built_in">NSDocumentDirectory</span>, <span class="built_in">NSUserDomainMask</span>, <span class="literal">YES</span>)lastObject];</div><div class="line"></div><div class="line"><span class="comment">//    2.拼接路径</span></div><div class="line">    <span class="built_in">NSString</span> *dataPath = [docPath stringByAppendingPathComponent:<span class="string">@"student.data"</span>];</div><div class="line"></div><div class="line"><span class="comment">//</span></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,dataPath);</div><div class="line">    <span class="keyword">return</span> dataPath;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"><span class="comment">//归档成二进制数据,然后进行偏好设置存储二进制数据</span></div><div class="line"><span class="built_in">NSData</span> * normalData = [<span class="built_in">NSKeyedArchiver</span> archivedDataWithRootObject:normalTempArray];</div><div class="line"></div><div class="line">[ud setObject:normalData forKey:<span class="string">@"normalPlaneCity"</span>];</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/14/沙盒文件以及沙盒文件路径、和本地存储/" data-id="cj3xytx450008arfylxdkj8sj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-NSArray的基本使用" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/13/NSArray的基本使用/" class="article-date">
+  <time datetime="2017-06-13T06:19:39.000Z" itemprop="datePublished">2017-06-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/13/NSArray的基本使用/">NSArray的基本使用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://www.jianshu.com/p/c8caa30afd9d" target="_blank" rel="external">NSArray的基本使用 - OC</a>  </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/13/NSArray的基本使用/" data-id="cj3xytx3r0002arfyowcc2kci" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Programmer-English-Vocabulary" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/13/Programmer-English-Vocabulary/" class="article-date">
+  <time datetime="2017-06-13T05:12:18.000Z" itemprop="datePublished">2017-06-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/13/Programmer-English-Vocabulary/">Programmer English Vocabulary</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li>file n. 文件；v. 保存文件</li>
+<li>command n. 命令，指令</li>
+<li>use v. 使用，用途</li>
+<li>program n. 程序</li>
+<li>line n. (数据，程序)行，线路</li>
+<li>if conj. 如果</li>
+<li>display vt. 显示，显示器</li>
+<li>set v. 设置，n. 集合</li>
+<li>key n. 键，关键字，关键码</li>
+<li>list n. 列表，显示，v. 打印</li>
+<li>by prep. 凭，靠，沿</li>
+<li>press v. 按，压</li>
+<li>with prep. 用，与，随着</li>
+<li>format n. 格式</li>
+<li>change v. 更换，改变，变动</li>
+<li>cursor n. 光标</li>
+<li>directory n. 目录，索引簿</li>
+<li>from prep. 从，来自，以来</li>
+<li>menu n. 菜单，目录</li>
+<li>option n. 任选，选择，可选项</li>
+<li>character n. 字符，符号，特性</li>
+<li>current n. 电流</li>
+<li>type n. 型，类型；v. 打印</li>
+<li>screen n. 屏幕，屏；v. 屏蔽</li>
+<li>specify v. 指定，规定，确定</li>
+<li>move v. 移动</li>
+<li>disk n. 盘，磁盘</li>
+<li>text n. 正文，文本</li>
+<li>drive v. 驱动；n. 驱动器</li>
+<li>see v. 看，看出，查看</li>
+<li>name n. 名，名称；vt. 命名</li>
+<li>record n. 记录</li>
+<li>box n. 箱，匣，(逻辑)框</li>
+<li>database n. 数据库</li>
+<li>help v. &amp; n. 帮助</li>
+<li>memory n. 记忆存储，存储器</li>
+<li>which pron. 哪个，a. 那一个</li>
+<li>all a. 全，全部；ad. 完全</li>
+<li>on ad. 接通，导电，开</li>
+<li>copy n. 复制，v. 拷贝</li>
+<li>shell n. 壳，外壳</li>
+<li>delete vt. 删除，删去，作废</li>
+<li>enter v. 键入，送入</li>
+<li>margin n. 余量，边缘，边际</li>
+<li>mark n. 标记；vt. 加标记</li>
+<li>also ad. &amp; conj. 也，亦，还</li>
+<li>do v. 做，干；n. 循环</li>
+<li>information n. 信息，情报</li>
+<li>choose v. 挑选，选择，选定</li>
+<li>select vt. 选择</li>
+<li>group n. 组，群</li>
+<li>first a. &amp; ad. &amp; n. 第一，首先</li>
+<li>field n. 字段，域，栏，场</li>
+<li>procedure n. 过程，程序，工序</li>
+<li>print v. 打印，印刷</li>
+<li>return v. 返回，回送</li>
+<li>number n. 数字，号码；vt. 编号</li>
+<li>selected a. 精选的</li>
+<li>want v. 需要，应该，缺少</li>
+<li>window n. 窗口</li>
+<li>message n. 信息，消息，电文</li>
+<li>dialog n. &amp; vt. 对话</li>
+<li>example n. 例子，实例</li>
+<li>create vt. 创立，建立</li>
+<li>insert vt. 插入</li>
+<li>related a. 相关的</li>
+<li>item n. 项，项目，条款</li>
+<li>edit vt. 编辑，编排，编篡</li>
+<li>marked a. 有记号的</li>
+<li>area n. (区)域，面积，方面</li>
+<li>parameter n. 参数，参变量</li>
+<li>then ad. &amp; conj. 那时，则</li>
+<li>variable a. 可变的；n. 变量</li>
+<li>tab n. 制表键</li>
+<li>up ad. 上，向上，a. 高的</li>
+<li>string n. 行，字符串</li>
+<li>each a. &amp; ad. 各(自)，每个</li>
+<li>active a. 激活的，活动的</li>
+<li>topic n. 题目，论题</li>
+<li>start v. 起动，开始，启动</li>
+<li>mode n. 态，方式，模</li>
+<li>selection n. 选择</li>
+<li>function n. 函数，功能，操作</li>
+<li>word n. 字(词)，单词</li>
+<li>make vt. 制造，形成，接通</li>
+<li>right a. 右边的，正确的</li>
+<li>value n. 值</li>
+<li>button n. 按钮</li>
+<li>index n. 索引，变址，指数</li>
+<li>without prep. 没有，在…以外</li>
+<li>appear vi. 出现，显现，好像</li>
+<li>left a. &amp; n. 左边(的)</li>
+<li>save v. 保存</li>
+<li>next n. 下一次，a. 其次</li>
+<li>off ad. (设备)关着，脱离</li>
+<li>following a. 下列的，以下的</li>
+<li>control v. 控制，支配，管理</li>
+<li>only a. 唯一的，ad. 仅仅</li>
+<li>user n. 用户</li>
+<li>end n. 结束，终点，端点</li>
+<li>system n. 系统</li>
+<li>contain vt. 包含，包括</li>
+<li>time n. 时间；vt. 计时</li>
+<li>letter n. 字母，信</li>
+<li>data n. 数据</li>
+<li>setting n. 设置，调整</li>
+<li>desire v. &amp; n. 期望</li>
+<li>position n. 位置；vt. 定位</li>
+<li>down ad. 落下，降低，减少</li>
+<li>task n. 任务；v. 派给…任务</li>
+<li>view n. &amp; v. 视图，景象</li>
+<li>switch n. &amp; v. 开关，转换，切换</li>
+<li>include vt. 包括，包含</li>
+<li>get v. 得到，获得，取</li>
+<li>default v. 缺省，预置，约定</li>
+<li>structure n. 结构，构造，构件</li>
+<li>into prep. 向内，进入</li>
+<li>path n. 路径，通路，轨道</li>
+<li>blank n. 空白，间隔</li>
+<li>open v. 打开，开启，断开</li>
+<li>add v. &amp; n. 加，增加，添</li>
+<li>enable vt. 启动，恢复正常操作</li>
+<li>operation n. 操作，运算，动作</li>
+<li>erase v. 擦除，取消，删除</li>
+<li>filename n. 文件名</li>
+<li>search v. 检索，查询，搜索</li>
+<li>another a. 另一个，别的</li>
+<li>last a. &amp; n. 最后(的)</li>
+<li>column n. 列，柱，栏</li>
+<li>after prep. &amp; ad. 以后，后面</li>
+<li>prompt n. &amp; v. 提示</li>
+<li>two n. &amp; a. 二，两，双</li>
+<li>execute v. 实行，实施</li>
+<li>about ad. 关于，大约，附近</li>
+<li>escape v. 逃避，逸出，换码</li>
+<li>error n. 错误，误差，差错</li>
+<li>currently ad. 目前，现在</li>
+<li>extension n. 扩充，延伸</li>
+<li>same a. 同样的，相同的</li>
+<li>status n. 状态，态，状况</li>
+<li>run v. 运行，运转，操作</li>
+<li>argument n. 变元，自变量</li>
+<li>statement n. 语句，陈述，命题</li>
+<li>shift v. 转义，换档，移位</li>
+<li>store n. &amp; vt. 存储，存储器</li>
+<li>scroll vt. 上滚(卷)；n. 纸卷</li>
+<li>replace vt. 替换，置换，代换</li>
+<li>macro n. 宏，宏功能，宏指令</li>
+<li>page n. 页面，页，版面</li>
+<li>quit v. 退出，结束</li>
+<li>define vt. 定义，规定，分辨</li>
+<li>reference n. &amp; a. 参考；参考的</li>
+<li>other a. 别的，另外的</li>
+<li>while conj. 当…的时候</li>
+<li>pressing n. &amp; a. 压制；紧急的</li>
+<li>restore vt. 恢复，复原</li>
+<li>top n. 顶，尖端</li>
+<li>how ad. 如何，怎样，多么</li>
+<li>color n. 颜色，色彩，(彩)色</li>
+<li>allow v. 允许，容许</li>
+<li>block n. (字，信息，数据)块</li>
+<li>decimal n. &amp; a. 十进制；十进制的</li>
+<li>main a. 主要的</li>
+<li>definition n. 定义，确实，清晰度</li>
+<li>between prep. 在…之间，中间</li>
+<li>optional a. 任选的，可选的</li>
+<li>date n. 日期</li>
+<li>remove v. 除去，移动</li>
+<li>arrow n. 箭头，指针</li>
+<li>label n. 标签，标号，标识符</li>
+<li>within prep. 在…以内</li>
+<li>issue v. 发行，出版，流出</li>
+<li>different a. 不同的，各种各样的</li>
+<li>available a. 可用的</li>
+<li>returned a. 退回的</li>
+<li>associate v. 相联，联想，关联</li>
+<li>attribute n. 属性，标志，表征</li>
+<li>dos 磁盘操作系统</li>
+<li>before prep. 以前，前，先</li>
+<li>order n. &amp; vt. 指令，次序；排序</li>
+<li>modify vt. 修改，改变，变址</li>
+<li>array n. 数组，阵列</li>
+<li>mouse n. 鼠标器</li>
+<li>note n. 注解，注释</li>
+<li>locate vt. 定位</li>
+<li>video n. 视频，电视</li>
+<li>printer n. 打印机，印刷机</li>
+<li>bar n. 条，杆，棒</li>
+<li>bottom n. &amp; a. 底，基础；底下的</li>
+<li>carriage n. 滑架，托架</li>
+<li>content n. 含量，容量，内容</li>
+<li>either a. &amp; pron. 任何一个，各</li>
+<li>ok ad. &amp; a. 对，好；全对</li>
+<li>space n. 空格键，空间</li>
+<li>editor n. 编辑程序</li>
+<li>exist vi. 存在，生存，有</li>
+<li>scope n. 范围，显示器</li>
+<li>paragraph n. 段(落)，节，短讯</li>
+<li>multi (词头)多</li>
+<li>clear v. 清除，弄干净</li>
+<li>exit n. &amp; vi. 出口；退出</li>
+<li>report vt. &amp; n. 报告，报表</li>
+<li>execution n. 执行</li>
+<li>backup n. 备份，后备，后援</li>
+<li>version n. 版本</li>
+<li>find v. 寻找，发现</li>
+<li>pointer n. 指针，指示字</li>
+<li>subset n. 子集，子设备</li>
+<li>keyboard n. 键盘</li>
+<li>full a. &amp; ad. &amp; n. 全(的)，满</li>
+<li>check v. 校对，栓查，核算</li>
+<li>should v. &amp; aux. 应当，该</li>
+<li>single a. &amp; n. 单个的；一个，单</li>
+<li>positioning n. 定位</li>
+<li>provide v. 提供</li>
+<li>title n. 题目，标题</li>
+<li>expression n. 表达式</li>
+<li>through prep. &amp; ad. 通过，直通</li>
+<li>toggle n. &amp; v. 触发器；系紧</li>
+<li>code n. 码，代码，编码</li>
+<li>such a. &amp; pron. 这样的，如此</li>
+<li>beginning n. 起点，初</li>
+<li>guide n. 向导，指南，入门</li>
+<li>tree n. 树，语法树</li>
+<li>environment n. 环境</li>
+<li>but 但是，可是，除非，不过</li>
+<li>device n. 设备，器件，装置</li>
+<li>highlight n. 增强亮度，提示区</li>
+<li>call v. 调用，访问，呼叫</li>
+<li>continue v. 连续，继续</li>
+<li>indicate vt. 指示，表示</li>
+<li>until prep. 到…为止，直到</li>
+<li>begin v. 开始，着手，开端</li>
+<li>place vt. 放，位，地点</li>
+<li>rename vt. 更名，改名</li>
+<li>swap v. 交换，调动</li>
+<li>work n. 工作</li>
+<li>remain vi. 剩下，留下，仍然</li>
+<li>close v. &amp; a. 关闭，闭合；紧密的</li>
+<li>combination n. 结合，组合</li>
+<li>profile n. 简要，剖面，概貌</li>
+<li>unless conj. 除非</li>
+<li>so pron. &amp; conj. 如此，这样</li>
+<li>except prep. 除…之外，除非</li>
+<li>turn v. &amp; n. 转，转动；圈，匝</li>
+<li>back n. 背面，反向，底座</li>
+<li>sure a. &amp; ad. 确实的；的确</li>
+<li>section n. 节，段，区域</li>
+<li>follow v. 跟随，跟踪</li>
+<li>split v. 分开，分离</li>
+<li>need v. 必须，需要</li>
+<li>access n. 存取，选取，接近</li>
+<li>additional a. 附加的，辅助的</li>
+<li>cancel v. 删除，取消，作废</li>
+<li>document n. 文献，资料，文件</li>
+<li>case n. 情况，场合</li>
+<li>numeric n. &amp; a. 数字的，分数</li>
+<li>go vi. 运行，达到</li>
+<li>load n. &amp; v. 装入，负载，寄存</li>
+<li>try n. (尝)试，试验</li>
+<li>size n. 尺寸，大小，容量</li>
+<li>entire a. &amp; n. 完全的；总体</li>
+<li>leave v. 离开，留下</li>
+<li>history n. 历史</li>
+<li>second n. &amp; a. 秒，第二(的)</li>
+<li>reflow v. &amp; n. 回流，逆流</li>
+<li>output n. 输出，输出设备</li>
+<li>out n. &amp; a. 输入，在外</li>
+<li>both a. &amp; ad. 两，双，都</li>
+<li>install vt. 安装</li>
+<li>source n. 源，电源，源点</li>
+<li>way n. 路线，途径，状态</li>
+<li>assign vt. 赋值，指定，分派</li>
+<li>support vt. 支援，支持，配套</li>
+<li>specific a. 特殊的，具体的</li>
+<li>join v. &amp; n. 连接，并(运算)</li>
+<li>expand v. 扩充，扩展，展开</li>
+<li>like a. 类似的，同样的</li>
+<li>diskette n. 软磁盘，软盘片</li>
+<li>skip v. 跳跃(定位)，跳过</li>
+<li>application n. 应用</li>
+<li>confirmation n. 认可</li>
+<li>whether conj. 无论，不管</li>
+<li>hold v. 保持</li>
+<li>click n. “卡搭”声，插销</li>
+<li>write v. 写，存入</li>
+<li>byte n. (二进制的)字节</li>
+<li>abbreviate vt. 缩写，省略</li>
+<li>show v. 显示，呈现，出示</li>
+<li>otherwise ad. &amp; a. 另外</li>
+<li>working n. 工作，操作，作业</li>
+<li>delimiter n. 定界符，分界符</li>
+<li>location n. 定位，(存储器)单元</li>
+<li>perform v. 执行，完成</li>
+<li>graphic n. &amp; a. 图形；图形的</li>
+<li>read v. 读，读阅</li>
+<li>confirm vt. 证实，确认</li>
+<li>sort v. 分类，排序</li>
+<li>clause n. 条款，项目，子句</li>
+<li>once ad. &amp; n. 只一次，一旦</li>
+<li>however conj. 然而，可是</li>
+<li>extend v. 扩充</li>
+<li>look v. 看，查看</li>
+<li>starting a. 起始的</li>
+<li>now ad. &amp; n. 此刻，现在</li>
+<li>original n. &amp; a. 原文；原(初)始的</li>
+<li>correspond vi. 通信(联系)</li>
+<li>property n. 性(质)，特征</li>
+<li>several a. &amp; n. 若干个，几个</li>
+<li>learn v. 学习，训练</li>
+<li>cause n. 原因，理由</li>
+<li>bracket n. (方)括号，等级</li>
+<li>omit vt. 省略，删去，遗漏</li>
+<li>running a. 运行着的，游动的</li>
+<li>sub-directory n. 子目录</li>
+<li>edge n. 棱，边，边缘，界限</li>
+<li>form n. 格式，表格，方式</li>
+<li>instruction n. 指令，指导</li>
+<li>ascii n. 美国信息交换标准码</li>
+<li>below a. &amp; prep. 下列的；低于</li>
+<li>standard n. 标准</li>
+<li>occurrence n. 出现，发生</li>
+<li>lock n. &amp; v. 锁，封闭；自动跟踪</li>
+<li>append vt. 附加，增补</li>
+<li>destination n. 目的地，接收站</li>
+<li>password n. 口令，保密字</li>
+<li>point n. 点，小数点，句号</li>
+<li>variety n. 变化，种类，品种</li>
+<li>many a. &amp; n. 许多，多数</li>
+<li>buffer n. 缓冲器</li>
+<li>useful a. 有用的</li>
+<li>object n. 对象，目标，物体</li>
+<li>again ad. 再，又，重新，也</li>
+<li>operating a. 操作的，控制的</li>
+<li>carry v. 进位，带</li>
+<li>update v. 更新，修改，校正</li>
+<li>moving n. &amp; a. 活动的，自动的</li>
+<li>coprocessor n. 协同处理器</li>
+<li>overlay v. 覆盖，重叠</li>
+<li>practice n. 实习，实践</li>
+<li>navigation n. 导航</li>
+<li>automatically ad. 自动地，机械地</li>
+<li>total n. &amp; v. 总数；总计</li>
+<li>previous a. 早先的，上述的</li>
+<li>software n. 软件</li>
+<li>shortcut n. 近路，捷径</li>
+<li>long a. 长的，远的</li>
+<li>unique a. 唯一的，独特的</li>
+<li>part n. 部分，零件</li>
+<li>updated a. 适时的，更新的</li>
+<li>internal a. 内部的</li>
+<li>fill v. 填充</li>
+<li>basic n. &amp; a. 基本；基本的</li>
+<li>math n. 数学</li>
+<li>since prep. 自从…以来</li>
+<li>determine v. 确定</li>
+<li>making n. 制造，构造</li>
+<li>center n. 中心，中央</li>
+<li>already ad. 已经，早已</li>
+<li>keyword n. 关键字(词)</li>
+<li>action n. 操作，运算</li>
+<li>condition n. 条件，情况；vt. 调节</li>
+<li>quick a. &amp; ad. 快速的，灵敏的</li>
+<li>assigned a. 指定的，赋值的</li>
+<li>give vt. 给出，赋予，发生</li>
+<li>large a. (巨)大的，大量的</li>
+<li>chapter n. 章，段</li>
+<li>computer n. 计算机</li>
+<li>complete v. &amp; a. 完成；完整的</li>
+<li>past a. 过去的，结束的</li>
+<li>match v. 比较，匹配，符合</li>
+<li>recover v. 恢复，回收</li>
+<li>always ad. 总是，一直，始终</li>
+<li>require v. 需要，要求</li>
+<li>opening n. 打开，断路，孔</li>
+<li>network n. &amp; vt. 网络；联网</li>
+<li>sign n. 符号，信号，记号</li>
+<li>release vt. &amp; n. 释放，核发，版</li>
+<li>three a. &amp; n. 三(的)</li>
+<li>recall vt. 撤消，复活，检索</li>
+<li>deletion n. 删去(部分)，删除</li>
+<li>fixed a. 固定的，不变的</li>
+<li>amount vt. &amp; n. 总计；合计</li>
+<li>alias n. 别名，代号，标记</li>
+<li>quote n. &amp; v. 引号；加引号</li>
+<li>correct a. &amp; vt. 正确的；改正</li>
+<li>else ad. &amp; conj. 否则，此外</li>
+<li>maximum n. &amp; a. 最大(的)，最高</li>
+<li>under prep. 在…下面(之下)</li>
+<li>take v. 取，拿</li>
+<li>switching n. 开关，转接，交换</li>
+<li>element n. 元件，元素，码元</li>
+<li>modification n. 改变，修改</li>
+<li>modified a. 修改的，变更的</li>
+<li>input n. 输入，输入设备</li>
+<li>uppercase n. 大写字母</li>
+<li>plus prep. 加，加上，外加</li>
+<li>found v. 建立，创办</li>
+<li>debug vt. 调试</li>
+<li>force v. &amp; n. 强制；压力，强度</li>
+<li>lowercase n. 下档，小写体</li>
+<li>just ad. 恰好</li>
+<li>undo vt. 取消，废除</li>
+<li>environ vt. 围绕，包围</li>
+<li>why ad. 为什么</li>
+<li>temporary a. 暂时的，临时的</li>
+<li>put v. 存放(记录)，放置</li>
+<li>instead ad. (来)代替，当作</li>
+<li>encounter v. &amp; n. 遇到，碰到</li>
+<li>across prep. 交叉，越过</li>
+<li>matching n. 匹配，调整</li>
+<li>wildcard n. 通配符</li>
+<li>spill v. 漏出，溢出，漏失</li>
+<li>level n. 水平，级，层次</li>
+<li>browse v. 浏览</li>
+<li>speech n. 说话，言语，语音</li>
+<li>occur vi. 发生，出现，存在</li>
+<li>memo n. 备忘录</li>
+<li>prior a. 先验的，优先的</li>
+<li>loaded a. 有负载的</li>
+<li>length n. (字，记录，块)长度</li>
+<li>round v. 舍入，四舍五入</li>
+<li>variant n. &amp; a. 变体，易变的</li>
+<li>floppy n. 软磁盘</li>
+<li>machine n. 机器，计算机</li>
+<li>square n. &amp; a. 正方形；方形的</li>
+<li>supply vt. &amp; n. 电源，供给</li>
+<li>home n. &amp; a. 家，出发点</li>
+<li>normal a. &amp; n. 正常，标准</li>
+<li>onto prep. 向…，到…上</li>
+<li>during prep. 在…期间</li>
+<li>module n. 模块(程序设计)</li>
+<li>monochrome n. 单色</li>
+<li>assistance n. 辅助设备，帮助</li>
+<li>tell n. 讲，说，教，计算</li>
+<li>library n. (程序…)库，图书馆</li>
+<li>demonstration n. (公开)表演，示范</li>
+<li>stack n. 栈，堆栈，存储栈</li>
+<li>even a. &amp; ad. 偶数的；甚至</li>
+<li>evaluate v. 估计，估算，求值</li>
+<li>times n. 次数</li>
+<li>previously ad. 以前，预先</li>
+<li>directly ad. 直接地，立即</li>
+<li>logical a. 逻辑的，逻辑“或”</li>
+<li>template n. 标准框，样板，模板</li>
+<li>calling n. 呼叫，调用，调入</li>
+<li>later a. 更后的，后面的</li>
+<li>driver n. 驱动器，驱动程序</li>
+<li>therefore ad. &amp; conj. 因此，所以</li>
+<li>saving a. 保存的</li>
+<li>detail n. 元件，零件，细节</li>
+<li>linker n. 连接程序</li>
+<li>loop n. 圈，环；(程序)循环，回路</li>
+<li>process vt. 处理，进程，加工</li>
+<li>scheme n. 方案，计划，图</li>
+<li>every a. 每个，全体，所有的</li>
+<li>refer v. 访问，引用，涉及</li>
+<li>possible a. 可能的，潜在的</li>
+<li>above a. 在…之上，大于</li>
+<li>overview n. 综述，概要</li>
+<li>result n. 结果</li>
+<li>syntax n. 语法，文法，句法</li>
+<li>abbreviation n. 缩短，省略，简称</li>
+<li>bios n. 基本输入/输出系统</li>
+<li>hidden a. 隐藏的，秘密的</li>
+<li>null n. &amp; a. 空(的)，零(的)</li>
+<li>send v. 发送</li>
+<li>private a. 专用的，私人的</li>
+<li>hard a. 硬的</li>
+<li>hardware n. 硬件</li>
+<li>say v. 说，显示，假定</li>
+<li>equal vt. &amp; n. 等于，相等；等号</li>
+<li>pack n. 压缩，包裹</li>
+<li>minus a. &amp; n. 负的；负数，减</li>
+<li>alternate a. 交替的，备用的</li>
+<li>collapse v. 崩溃，破裂</li>
+<li>corner n. 角，角落，转换</li>
+<li>present a. &amp; v. 现行的；提供</li>
+<li>interpreter n. 解释程序，翻译机</li>
+<li>advance v. &amp; n. 进步，提高；进展</li>
+<li>forward a. 正向的</li>
+<li>fast a. &amp; ad. 快速的</li>
+<li>special a. 专用的，特殊的</li>
+<li>slash n. 斜线</li>
+<li>utility n. &amp; a. 实用程序；实用性</li>
+<li>regardless a. 不注意的，不考虑的</li>
+<li>disable vt. 禁止，停用</li>
+<li>compatible a. 可兼容的，可共存的</li>
+<li>depend vi. 随…而定，取决于</li>
+<li>empty a. 空，零，未占用</li>
+<li>alphabetical a. 字母(表)的，abc的</li>
+<li>branch n. 分支，支线；v. 转换</li>
+<li>resume v. 重(新)开(始)</li>
+<li>multiple a. 多次的，复杂的</li>
+<li>monitor n. 监视器，监督程序</li>
+<li>configuration n. 配置</li>
+<li>replacement n. 替换，置换，更新</li>
+<li>required a. 需要的</li>
+<li>macros n. 宏命令(指令)</li>
+<li>table n. 表</li>
+<li>loss n. 损耗，损失</li>
+<li>batch n. 批，批量，成批</li>
+<li>exact a. 正确的</li>
+<li>aboveboard ad. &amp; a. 照直，公开的</li>
+<li>activate vt. &amp; n. 使激活，驱动</li>
+<li>around ad. &amp; prep. 周围，围绕</li>
+<li>slow a. &amp; ad. 慢速的</li>
+<li>floating a. 浮动的，浮点的</li>
+<li>refresh v. 刷新，更新，再生</li>
+<li>stop v. 停止，停机</li>
+<li>pass v. 传送，传递，遍(数)</li>
+<li>public a. 公用的，公共的</li>
+<li>eject n. 弹出</li>
+<li>ignore vt. 不管，忽略不计</li>
+<li>share v. 共享，共用</li>
+<li>sequence n. 顺序，时序，序列</li>
+<li>consist vi. 符合，包括</li>
+<li>step n. 步，步骤，步长，档</li>
+<li>double a. 两倍的，成双的</li>
+<li>come vi. 来，到，出现</li>
+<li>lower a. 下部的，低级的</li>
+<li>describe vt. 描述，沿…运行</li>
+<li>count v. 计数，计算</li>
+<li>pop v. 上托，弹出(栈)</li>
+<li>valid a. 有效的</li>
+<li>suspend v. 中止，暂停，挂起</li>
+<li>enhance vt. 增强，放大，夸张</li>
+<li>separate v. &amp; a. 分隔，分离，各自的</li>
+<li>echo n. 回波，反射波</li>
+<li>necessary a. 必要的，必然的</li>
+<li>greater than 大于</li>
+<li>able a. 能…的，有能力的</li>
+<li>marking n. 标记，记号，传号</li>
+<li>ask v. 请求，需要</li>
+<li>term n. 项，条款，术语</li>
+<li>bring v. 引起，产生，拿来</li>
+<li>warning n. &amp; a. 报警，预告</li>
+<li>less a. &amp; ad. 更小，更少</li>
+<li>whose pron. 谁的</li>
+<li>comment n. &amp; vi. 注解，注释</li>
+<li>effect n. 效率，作用，效能</li>
+<li>expanding a. 扩展的，扩充的</li>
+<li>on-line a. 联机的</li>
+<li>reorder v. (按序)排列，排序</li>
+<li>direct a. 直接的</li>
+<li>enclose vt. 封闭，密封，围住，包装</li>
+<li>reset vt. 复位，置“0”</li>
+<li>various a. 不同的，各种各样的</li>
+<li>paper n. 纸，文件，论文</li>
+<li>prevent v. 防止，预防</li>
+<li>side n. (旁)边，面，侧(面)</li>
+<li>push v. 推，按，压，进(栈)</li>
+<li>programming n. 程序设计，编程序</li>
+<li>upper a. 上的，上部的</li>
+<li>row n. 行</li>
+<li>pressed a. 加压的，压缩的</li>
+<li>temporarily ad. 暂时</li>
+<li>day n. 日，天，白天，时代</li>
+<li>repaint vt. 重画</li>
+<li>redefine vt. 重新规定(定义)</li>
+<li>relation n. 关系，关系式</li>
+<li>dimension n. 尺寸，维，因次</li>
+<li>boundary n. 边界，界限，约束</li>
+<li>zoom v. 变焦距</li>
+<li>initialize v. 初始化</li>
+<li>personal a. 个人的，自身的</li>
+<li>hello int. &amp; v. 喂！；呼叫</li>
+<li>true a. &amp; n. 真，实，选中</li>
+<li>wish v. &amp; n. 祝愿，希望</li>
+<li>font n. 铅字，字形</li>
+<li>know v. 知道，了解，认识</li>
+<li>convert v. 转换，变换</li>
+<li>global n. 全局，全程，全局符</li>
+<li>still a. &amp; n. &amp; v. 静止的；静；平静</li>
+<li>installation n. 安装，装配</li>
+<li>invoke vt. 调用，请求</li>
+<li>interactive a. 交互式，交互的</li>
+<li>described a. 被看到的，被发现的</li>
+<li>century n. 世纪</li>
+<li>literal a. 文字的</li>
+<li>rather ad. 宁可，有点</li>
+<li>exclusive a. 排斥，排它性</li>
+<li>marker n. 记号，标记，标志</li>
+<li>wait v. 等待</li>
+<li>appropriate a. 适当的，合适的</li>
+<li>fit v. &amp; n. 适合，装配；非特</li>
+<li>adapter n. 适配器，转换器</li>
+<li>filter n. 滤波器，滤光材料</li>
+<li>break v. 断开，撕开，中断</li>
+<li>backward ad. 向后，逆，倒</li>
+<li>searching n. 搜索</li>
+<li>receive v. 接收</li>
+<li>dual a. 对偶的，双的</li>
+<li>retry vt. 再试，复算</li>
+<li>normally ad. 正常地，通常</li>
+<li>exactly ad. 正好，完全，精确地</li>
+<li>immediately ad. 直接地</li>
+<li>separated a. 分开的</li>
+<li>high a. 高</li>
+<li>equivalent a. 相等的，等效的</li>
+<li>light n. &amp; a. 光(波，源)；轻的</li>
+<li>zero n. 零，零位，零点</li>
+<li>storage n. 存储，存储器</li>
+<li>width n. 宽度</li>
+<li>language n. 语言</li>
+<li>startup n. 启动</li>
+<li>much a. &amp; n. 很多，许多，大量</li>
+<li>per prep. 每，按</li>
+<li>over prep. 在…上方</li>
+<li>mirror n. &amp; v. 镜，反射，反映</li>
+<li>request n. &amp; vt. 请求</li>
+<li>keypad n. 小键盘</li>
+<li>keep v. 保持，保存</li>
+<li>resident a. 驻留的</li>
+<li>learning n. 学问，知识</li>
+<li>talk v. 通话，谈话</li>
+<li>summary n. 摘要，汇总，提要</li>
+<li>well n. &amp; a. 井；好，良好</li>
+<li>link n. &amp; v. 链接；连接，联络</li>
+<li>according to a. 按照，根据</li>
+<li>identify v. 识别，辨认</li>
+<li>designated a. 指定的，特指的</li>
+<li>pertain vi. 附属，属于，关于</li>
+<li>expansion n. 展开，展开式</li>
+<li>incompatible a. 不兼容的</li>
+<li>blinking n. 闪烁</li>
+<li>month n. 月份</li>
+<li>precede v. 先于</li>
+<li>readily ad. 容易地，不勉强</li>
+<li>transportable a. 可移动的</li>
+<li>appropriately ad. 适当地</li>
+<li>routine n. 程序，例行程序</li>
+<li>ready a. 就绪，准备好的</li>
+<li>listing n. 列表，编目</li>
+<li>newly ad. 新近，重新</li>
+<li>year n. (一)年，年度，年龄</li>
+<li>contact n. 接触，触点</li>
+<li>session n. 对话，通话</li>
+<li>own a. &amp; v. 自己的；拥有</li>
+<li>redraw vt. 再拉</li>
+<li>here ad. 在这里</li>
+<li>manual a. 手工的，手动的</li>
+<li>particular a. 特定的，特别的</li>
+<li>rectangle n. 矩形</li>
+<li>additive a. &amp; n. 相加的；附加物</li>
+<li>similar a. 相似的</li>
+<li>assembly n. 汇编，安装，装配</li>
+<li>copyright n. 版权</li>
+<li>description n. 描述</li>
+<li>retrieve v. 检索</li>
+<li>mistake n. 错误</li>
+<li>produce v. 生产，制造</li>
+<li>ram 随机存取存储器</li>
+<li>exception n. 例外，异常，异议</li>
+<li>digit n. 数字，位数，位</li>
+<li>reverse v. &amp; a. 反向的，逆</li>
+<li>minimum n. &amp; a. 最小(的)，最低</li>
+<li>enough a. &amp; ad. 足够的，充足的</li>
+<li>although conj. 虽然，即使</li>
+<li>reindex v. &amp; n. 变换(改变)符号</li>
+<li>third a. &amp; n. 第三，三分之一</li>
+<li>red a. &amp; n. 红色(的)</li>
+<li>along prep. &amp; ad. 沿着</li>
+<li>test n. &amp; v. 测试</li>
+<li>small a. 小的，小型的</li>
+<li>feed v. 馈给，(打印机)进纸</li>
+<li>company n. &amp; v. 公司；交际，交往</li>
+<li>movie n. 影片，电影(院)</li>
+<li>compile vt. 编译</li>
+<li>frequently ad. 常常，频繁地</li>
+<li>undefined a. 未定义的</li>
+<li>state n. &amp; vt. 状态；确定</li>
+<li>tick v；n. 滴答(响)；勾号(√)</li>
+<li>accept vt. 接受，认可，同意</li>
+<li>intense a. 强烈的，高度的</li>
+<li>documentation n. 文件编制，文本</li>
+<li>asterisk n. 星号(*)</li>
+<li>easily ad. 容易地，轻易地</li>
+<li>become v. 成为，变成，适宜</li>
+<li>address vt. &amp; n. 寻址；地址</li>
+<li>interface n. 接口</li>
+<li>pause vi. 暂停</li>
+<li>repeat v. 重复</li>
+<li>restart v. 重新启动，再启动</li>
+<li>assumed a. 假定的</li>
+<li>speed n. 速度</li>
+<li>entry n. 输入，项(目)，入口</li>
+<li>combine v. 组合，联合</li>
+<li>organize v. 组织，创办，成立</li>
+<li>finished a. 完成的</li>
+<li>mixed a. 混合的</li>
+<li>permit v. 许可，容许</li>
+<li>formatting n. 格式化</li>
+<li>root n. 根</li>
+<li>symbol n. 符号，记号</li>
+<li>binary n. &amp; a. 二进制；双态的</li>
+<li>whenever ad. &amp; conj. 随时</li>
+<li>reach v. &amp; n. 范围，达到范围</li>
+<li>caution n. &amp; v. 警告，注意</li>
+<li>subtotal n. &amp; v. 小计，求部分和</li>
+<li>card n. 卡片，插件(板)</li>
+<li>general a. 通用的</li>
+<li>associated a. 联合的，相联的</li>
+<li>transfer v. 传送，转换，转移</li>
+<li>connect v. 连接</li>
+<li>partition v. 划分，分区，部分</li>
+<li>hexadecimal a. 十六进制的</li>
+<li>generate vt. 产生，发生，生成</li>
+<li>specification n. 说明书，规则说明书</li>
+<li>customize vt. 定制，定做</li>
+<li>far a. 远的，遥远的</li>
+<li>nest v. 嵌套，后进先出</li>
+<li>duplicate vt. 复制，转录，加倍</li>
+<li>compression n. 压缩，浓缩</li>
+<li>unable a. 不能的</li>
+<li>means n. 方法，手段</li>
+<li>alternately ad. 交替地，轮流地</li>
+<li>intensity n. 强度，亮度</li>
+<li>reading n. 读，读数</li>
+<li>let v. 让，允许</li>
+<li>explicitly ad. 明显地，显然地</li>
+<li>compare v. 比较，对照，比喻</li>
+<li>sector n. &amp; v. 扇区，段；分段</li>
+<li>problem n. 问题，难题</li>
+<li>vertically ad. 竖直地，直立地</li>
+<li>horizontally ad. 水平地</li>
+<li>backspace v. 退格，回退</li>
+<li>terminate v. 端接，终止</li>
+<li>people n. 人们</li>
+<li>short a. &amp; n. 短的；短路</li>
+<li>drag vt. 拖，拉，牵，曳</li>
+<li>formatted a. 有格式的</li>
+<li>preview n. &amp; vt. 预映</li>
+<li>underscore vt. 在…下面划线</li>
+<li>correctly ad. 正确地</li>
+<li>initially ad. 最初，开头</li>
+<li>reformat v. 重定格式</li>
+<li>inside n. &amp; a. 内部，内容；内部的</li>
+<li>integrate v. 综合，集成</li>
+<li>controlled a. 受控制的，受操纵的</li>
+<li>period n. 周期</li>
+<li>huge a. 巨大的，非常的</li>
+<li>determined a. 坚决的，毅然的</li>
+<li>trailing n. &amp; a. 结尾；尾随的</li>
+<li>seek v. 查找，寻找，探求</li>
+<li>introduction n. 入门，介绍，引进</li>
+<li>indent v. 缩排</li>
+<li>base n. 基，底，基地址</li>
+<li>integer n. 整数</li>
+<li>attempt vt. &amp; n. 尝试，试验</li>
+<li>twice n. &amp; ad. 两次，两倍于</li>
+<li>formed a. &amp; n. 成形</li>
+<li>subscript n. 注脚，下标</li>
+<li>tiny a. 微小的，微量的</li>
+<li>model n. 模型，样机，型号</li>
+<li>correction n. 校正，修正</li>
+<li>rating n. 定额，标称值</li>
+<li>secondary a. 辅助的，第二的</li>
+<li>opened a. 开路的，断开的</li>
+<li>limit n. 极限，限界</li>
+<li>sun n. 太阳，日</li>
+<li>translate v. 翻译，转换，平移</li>
+<li>reason n. 原因，理由</li>
+<li>colon n. 冒号“:”</li>
+<li>avoid vt. 避免，取消，无效</li>
+<li>range n. 范围，域，区域</li>
+<li>allocate vt. 分配</li>
+<li>wordperfect a. 一字不错地熟记的</li>
+<li>simply ad. 简单地，单纯地</li>
+<li>verify vt. 鉴定，检验，核对</li>
+<li>manner n. 方法，样式，惯例</li>
+<li>direction n. 方向，定向，指向</li>
+<li>portion n. &amp; vt. 部分；分配</li>
+<li>emulator n. 仿真器，仿真程序</li>
+<li>successful a. 成功的</li>
+<li>applied a. 适用的，外加的</li>
+<li>sum n. 和，合计，总额</li>
+<li>achieve vt. 完成，实现</li>
+<li>together ad. 一同，共同，相互</li>
+<li>affect vt. 影响，改变，感动</li>
+<li>delay v. 延迟</li>
+<li>free a. 自由的，空闲的</li>
+<li>properly ad. 真正地，适当地</li>
+<li>kind n. 种类，属，级，等</li>
+<li>splitting n. 分区(裂)</li>
+<li>feature n. 特征，特点</li>
+<li>console n. 控制台，操作台</li>
+<li>operate v. 操作，运算</li>
+<li>kernel n. 内核(核心)程序</li>
+<li>easy a. &amp; ad. 容易的；容易地</li>
+<li>modifier n. 修改量，变址数</li>
+<li>invalid a. 无效的</li>
+<li>compiler n. 编译程序(器)</li>
+<li>dot n. 点</li>
+<li>beep n. 蜂鸣声，嘀嘀声</li>
+<li>face n. 面，表面</li>
+<li>random a. 随机的</li>
+<li>facility n. 设施，装备，便利</li>
+<li>heading n. 标题</li>
+<li>asynchronous a. 异步的，非同步的</li>
+<li>series n. 序列，系列，串联</li>
+<li>individual a. 个别的，单个的</li>
+<li>explain v. 阐明，解释</li>
+<li>paste n. 湖，胶，膏</li>
+<li>welcome vt. &amp; n. 欢迎</li>
+<li>six n. &amp; a. 六(个)(的)</li>
+<li>early a. &amp; ad. 早期，初期</li>
+<li>wrap v. &amp; n. 包装，缠绕</li>
+<li>blue a. &amp; n. 蓝(色)，青色</li>
+<li>queue v. &amp; n. 排队，队列</li>
+<li>interrupt v. &amp; n. 中断</li>
+<li>respect n. &amp; vt. 遵守，关系</li>
+<li>converted a. 转换的，变换的</li>
+<li>common a. 公用的</li>
+<li>hyphen n. 连字符，短线</li>
+<li>serial a. 串行的，串联的</li>
+<li>loading n. 装入，加载，存放</li>
+<li>retain vt. 保持，维持</li>
+<li>setup n. 安排，准备，配置</li>
+<li>freeze v. 冻结，结冰</li>
+<li>intend vt. 打算，设计</li>
+<li>explanation n. 说明，注解，注释</li>
+<li>certain a. 确实的，确定的</li>
+<li>zap v. 迅速离去，击溃</li>
+<li>archive vt. 归档</li>
+<li>negative a. 负的，否定的</li>
+<li>image n. 图像，影像，映像</li>
+<li>platform n. 平台，台架</li>
+<li>often ad. 经常，往往，屡次</li>
+<li>signal n. &amp; v. 信号；发信号</li>
+<li>cpu 控制处理部件</li>
+<li>bit n. 比特；(二进制)位</li>
+<li>fully ad. 十分，完全</li>
+<li>deactivate vt. 释放，去活化</li>
+<li>especially ad. 特别(是)，尤其</li>
+<li>usually ad. 通常，平常，一般</li>
+<li>recommend vt. 推荐，建议</li>
+<li>maintain vt. 维护，保养，保留</li>
+<li>important a. 严重的，显著的</li>
+<li>central a. 中央的，中心的</li>
+<li>addition n. 加法，增加</li>
+<li>anytime ad. 在任何时候</li>
+<li>analyst n. 分析员</li>
+<li>false a. 假(布尔值)，错误</li>
+<li>black a. &amp; n. 黑色的，黑色</li>
+<li>gather n. 聚集，集合</li>
+<li>cycle n. &amp; v. 周，周期；循环</li>
+<li>relative a. 相对的</li>
+<li>offer v. 提供，给予，呈现</li>
+<li>ending n. 结束</li>
+<li>rent v. &amp; n. 租用；裂缝</li>
+<li>sentence n. 句(子)</li>
+<li>remember v. 存储，记忆，记住</li>
+<li>proper a. 真的，固有的</li>
+<li>design v. 设计</li>
+<li>examine v. 检验，考试，审查</li>
+<li>initial a. 最初的，初始的</li>
+<li>corrupt v. &amp; a. 恶化；有毛病的</li>
+<li>buy v. 买，购买，赢得</li>
+<li>increase v. 增加，增大</li>
+<li>host n. 主机</li>
+<li>sample n. &amp; v. 样品，样本；抽样</li>
+<li>pending a. 悬而未决的，未定的</li>
+<li>divide v. 除</li>
+<li>boot n. 引导，靴</li>
+<li>hide v. 隐藏，隐蔽</li>
+<li>half n. &amp; a. &amp; ad. 一半，半个</li>
+<li>magenta n. &amp; a. 深红色(的)</li>
+<li>leading n. &amp; a. 引导(的)</li>
+<li>wrong a. &amp; ad. n. 错误(的)</li>
+<li>today n. &amp; ad. 今天</li>
+<li>least a. &amp; ad. 最小(的)</li>
+<li>opposite a. &amp; n. &amp; ad. 相反的</li>
+<li>white a. &amp; n. 白色(的)</li>
+<li>override v. &amp; n. 超越，克服</li>
+<li>brown a. &amp; n. 褐色(的)，棕色</li>
+<li>hex a. &amp; n. 六角形的</li>
+<li>rest n. &amp; v. 剩余，休息</li>
+<li>damage n. &amp; vt. 损伤，故障</li>
+<li>instant a. 立刻的，直接的</li>
+<li>reserved a. 保留的，预订的</li>
+<li>technology n. 工艺，技术，制造学</li>
+<li>handle n. 处理，句柄</li>
+<li>apply v. 应用，适用于，作用</li>
+<li>stand v. 处于(状态)，保持</li>
+<li>payment n. 支付，付款</li>
+<li>kilobyte n. 千字节(kb)</li>
+<li>parenthesis n. 括弧，圆括号</li>
+<li>scan v. 扫描，扫视，搜索</li>
+<li>locating n. 定位，查找</li>
+<li>developer n. 开发者，显影剂</li>
+<li>murder n. 弄坏，毁掉</li>
+<li>flush v. 弄平，使齐平</li>
+<li>unlock v. 开锁，打开</li>
+<li>movement n. 传送，移动</li>
+<li>consecutive a. 连续的，连贯的</li>
+<li>collection n. 集合，聚集，画卷</li>
+<li>front a. 前面的，正面的</li>
+<li>addressing n. 寻址</li>
+<li>prefix n. 前缀</li>
+<li>carousel n. 圆盘传送带</li>
+<li>safety n. 安全，保险</li>
+<li>static a. 静态的，不变的</li>
+<li>background n. 背景，底色，基础</li>
+<li>product n. (乘)积，产品</li>
+<li>assignment n. 赋值，分配</li>
+<li>bad a. 坏的，不良的</li>
+<li>declare v. 说明</li>
+<li>adjust vt. 调整，调节，控制</li>
+<li>recognize v. 识别</li>
+<li>route n. 路线，路由</li>
+<li>respectively ad. 分别地</li>
+<li>unsuccessful a. 不成功的，失败的</li>
+<li>received a. 被接收的，公认的</li>
+<li>navigate v. 导航，驾驶</li>
+<li>considered a. 考虑过的，被尊重的</li>
+<li>due a. 到期的，应付(给)的</li>
+<li>recently ad. 近来</li>
+<li>room n. 房间，空间</li>
+<li>descend v. 下降，落下</li>
+<li>fact n. 事实</li>
+<li>alter v. 改变，修改</li>
+<li>track n. 磁道，轨道</li>
+<li>precedence n. 优先权</li>
+<li>skeleton n. 骨架，框架</li>
+<li>log n. &amp; v. 记录，存入</li>
+<li>star n. 星形，星号</li>
+<li>hot a. 热的</li>
+<li>replaceable a. 可替换的</li>
+<li>accessible a. 可以使用的</li>
+<li>involve vt. 涉及，卷入，占用</li>
+<li>configure vt. 使成形</li>
+<li>question n. 问题</li>
+<li>green n. &amp; a. 绿色绿色的</li>
+<li>entirely ad. 完全地，彻底地</li>
+<li>helpful a. 有帮助的，有用的</li>
+<li>middle a. 中间的</li>
+<li>declared a. 承认的，申报的</li>
+<li>compress vt. 压缩，精减</li>
+<li>graphically ad. 用图表表示</li>
+<li>auto a. 自动的</li>
+<li>automatic a. 自动的</li>
+<li>aligned a. 对准的，均衡的</li>
+<li>anywhere ad. 在任何地方</li>
+<li>terminal n. 终端，端子</li>
+<li>door n. 舱门，入口，孔</li>
+<li>expire v. 终止，期满</li>
+<li>resolution n. 分辨率</li>
+<li>local a. 局部的，本地的</li>
+<li>semicolon n. 分号(；)</li>
+<li>reread vt. 重读</li>
+<li>overwrite v. 重写</li>
+<li>critical a. &amp; n. 临界的；临界值</li>
+<li>manager n. 管理程序</li>
+<li>capability n. 能力，效力，权力</li>
+<li>affected a. 受了影响的</li>
+<li>allowed a. 容许的</li>
+<li>border n. 边界，框，界限</li>
+<li>cache n. 高速缓存</li>
+<li>bell n. 铃，钟</li>
+<li>play v. 玩，奏，放音，放象</li>
+<li>quickly a. 快，迅速地</li>
+<li>fastback n. 快速返回</li>
+<li>answer n. &amp; v. 响应，回答；答复</li>
+<li>represent v. 表示，表现，代表</li>
+<li>difference n. 差分，差</li>
+<li>highest a. 最高的</li>
+<li>project n. 项目，计划，设计</li>
+<li>physical a. 物理的，实际的</li>
+<li>matter n. 物质，内容，事情</li>
+<li>hercules n. 大力神，大力士</li>
+<li>reduce v. 减少，降低，简化</li>
+<li>publisher n. 出版者，发行人</li>
+<li>trim n. 区标，微调</li>
+<li>substitute v. 代替，替换，代入</li>
+<li>disabled a. 禁止的，报废的</li>
+<li>recent a. 近来的</li>
+<li>positive a. 正的，阳的，正片</li>
+<li>upgrade v. 升级，提高质量</li>
+<li>instance n. &amp; vt. 例子，情况；举例</li>
+<li>happen vi. (偶然)发生，碰巧</li>
+<li>elapsed vi. &amp; n. 经过</li>
+<li>future n. &amp; a. 将来，未来的</li>
+<li>midnight n. &amp; a. 午夜</li>
+<li>though conj. 虽然，尽管</li>
+<li>nor conj. 也不</li>
+<li>mono a. &amp; n. 单音的</li>
+<li>slide v. &amp; n. 滑动，滑动触头</li>
+<li>abort v. &amp; n. 中断，故障</li>
+<li>jump v. &amp; n. 转移</li>
+<li>toward prep. 朝(着…方向)</li>
+<li>throughout prep. 贯穿，整，遍</li>
+<li>via prep. 经过，经由</li>
+<li>among prep. 在…之中，中间</li>
+<li>neither a. &amp; pron. (两者)都不</li>
+<li>layer n. &amp; v. 层，涂层</li>
+<li>scatter v. 散射，分散，散布</li>
+<li>attention n. 注意(信号)</li>
+<li>convention n. 常规，约定，协定</li>
+<li>conventional a. 常规的，习惯的</li>
+<li>tool n. 工具，刀</li>
+<li>handler n. 处理程序</li>
+<li>processor n. 处理机，处理程序</li>
+<li>desktop a. 台式的</li>
+<li>build v. 建造，建立，组合</li>
+<li>windowing n. 开窗口</li>
+<li>development n. 开发，研制，显影</li>
+<li>exceed v. 超过，大于</li>
+<li>understand v. 懂，明白(了)，理解</li>
+<li>horizontal a. 水平的，横向的</li>
+<li>alphabetically ad. 按字母表顺序</li>
+<li>meet v. “与”，符合，满足</li>
+<li>protect vt. 保护</li>
+<li>reserve vt. 保留，预定，预约</li>
+<li>clock n. 时钟，计时器，同步</li>
+<li>manifest vt. 表明，显示，显现</li>
+<li>safe a. 安全的，可靠的</li>
+<li>disconnect vt. 拆接，断开，拆线</li>
+<li>clockwise a. 顺时针的</li>
+<li>eliminate vt. 除去，消除，切断</li>
+<li>actual a. 实际的，现实的</li>
+<li>declaration n. 说明，申报</li>
+<li>probably ad. 多半，很可能</li>
+<li>ring n. &amp; v. 环，圈；按铃</li>
+<li>cover vt. 盖，罩，套</li>
+<li>indicator n. 指示器，指示灯</li>
+<li>apple n. 苹果</li>
+<li>icon n. 图符，象征</li>
+<li>consideration n. 考虑，研究，讨论</li>
+<li>skill n. 技巧</li>
+<li>picture n. 图象，画面</li>
+<li>layout n. 布置，布局，安排</li>
+<li>suggest vt. 建议，提议，暗示</li>
+<li>convenient a. 方便的，便利的</li>
+<li>instruct vt. 讲授，命令</li>
+<li>appendix n. 附录</li>
+<li>medium n. &amp; a. 媒体；中等的</li>
+<li>truncate vt. 截尾，截断</li>
+<li>inhibit vt. 禁止</li>
+<li>nearly ad. 近乎，差不多，几乎</li>
+<li>warn vt. 警告，警戒，预告</li>
+<li>underline n. 下划线</li>
+<li>register n. 寄存器</li>
+<li>stuff n. &amp; vt. 材料；装入</li>
+<li>exclude vt. 排除，除去</li>
+<li>destroy vt. 破坏，毁坏，打破</li>
+<li>calculation n. 计算，统计，估计</li>
+<li>angle n. 角，角度</li>
+<li>lexical a. 辞典的，词法的</li>
+<li>decide v. (使)判定，判断</li>
+<li>trouble n. 故障</li>
+<li>processing n. (数据)处理，加工</li>
+<li>customer n. 顾客，客户</li>
+<li>port n. 端口，进出口</li>
+<li>discuss vt. 讨论，论述</li>
+<li>segment n. 段，片段，图块</li>
+<li>filing n. (文件的)整理汇集</li>
+<li>identically ad. 相等，恒等</li>
+<li>market n. 市场，行情，销路</li>
+<li>valuable a. 有价值的，贵重的</li>
+<li>limited a. 有限的，(受)限制的</li>
+<li>trying a. 费劲的，困难的</li>
+<li>heap n. 堆阵</li>
+<li>grey n. &amp; a. 灰色；灰色的</li>
+<li>permanently ad. 永久地，持久地</li>
+<li>accelerator n. 加速装置，加速剂</li>
+<li>originally ad. 原来，最初</li>
+<li>ability n. 性能，能力，效率</li>
+<li>internally ad. 在内(部)</li>
+<li>derelict vt. 中途淘汰</li>
+<li>redirect vt. 重定向</li>
+<li>reside vi. 驻留</li>
+<li>header n. 首部，标题，报头</li>
+<li>extra a. 特别的，额外的</li>
+<li>repeated a. 重复的</li>
+<li>death n. 毁灭，消灭</li>
+<li>observe v. 观察，探测</li>
+<li>density n. 密度</li>
+<li>management n. 管理</li>
+<li>environmental a. 周围的，环境的</li>
+<li>surrounding a. 周围的，环绕的</li>
+<li>master a. 总要的，总的</li>
+<li>recursive a. 递归的，循环的</li>
+<li>trap n. &amp; vt. 陷阱；俘获</li>
+<li>dimensional n. 尺寸的，…维的</li>
+<li>logic n. 逻辑(线路)</li>
+<li>conjunction n. 逻辑乘，“与”</li>
+<li>identical a. 相等的，相同的</li>
+<li>advice n. 意见，参考说明</li>
+<li>meaning n. 意义，含义</li>
+<li>fall n. 落下，降落</li>
+<li>interval n. 间歇，区间</li>
+<li>compatibility n. 兼容性，适应性</li>
+<li>rule n. 规则，法则，尺</li>
+<li>flag n. 标志(记)，特征(位)</li>
+<li>criterion n. 标准，判据，准则</li>
+<li>office n. 办公室，局，站</li>
+<li>express a. 快速的</li>
+<li>volume n. 卷，册，体积，容量</li>
+<li>soft a. 软的</li>
+<li>rated a. 额定的</li>
+<li>activity n. 活力，功率</li>
+<li>odometer n. 里程表，计程仪</li>
+<li>phoenix n. 凤凰，绝世珍品</li>
+<li>obtain v. 获得，得到</li>
+<li>easel n. 框，(画)架</li>
+<li>latter a. 后面的，最近的</li>
+<li>decrease v. 减少，降低，缩短</li>
+<li>mainframe n. 主机，大型机</li>
+<li>debugger n. 调试程序</li>
+<li>diacritical a. 区分的，辩别的</li>
+<li>confidential a. 机密的</li>
+<li>trace v. 跟踪，追踪</li>
+<li>division n. 除，除法，(程序)部分</li>
+<li>regular a. 正则的，正规的</li>
+<li>implicit a. 隐式的</li>
+<li>mention vt. &amp; n. 叙述，说到</li>
+<li>near ad. &amp; prep. 领近，接近</li>
+<li>fifth n. &amp; a. 第五，五分之一</li>
+<li>seven n. &amp; a. 七(个)</li>
+<li>whereas conj. 面，其实，既然</li>
+<li>review v. &amp; n. (再)检查</li>
+<li>whatever pron. &amp; a. 无论什么</li>
+<li>transform v. &amp; n. 变换，变换式</li>
+<li>align v. &amp; n. 定位，对准</li>
+<li>yellow a. &amp; n. 黄色(的)</li>
+<li>assist v. &amp; n. 加速，帮助</li>
+<li>finish v. &amp; n. 完成，结束</li>
+<li>micro a. &amp; n. 微的，百万分之一</li>
+<li>beyond prep. 超过，那边</li>
+<li>against prep. 反对，阻止</li>
+<li>upon prep. 依据，遵照</li>
+<li>service n. &amp; vt. 服务，业务</li>
+<li>little a. 小的，少量的</li>
+<li>exhaust v. 取尽，用完</li>
+<li>choice n. 选择，精品</li>
+<li>sounding a. 发声的</li>
+<li>develop v. 发展，研制，显影</li>
+<li>holding n. 保持，固定，存储</li>
+<li>alpha n. 希腊字母α，未知数</li>
+<li>constant n. 常数</li>
+<li>warranty n. 保证(书)，授权</li>
+<li>stay v. 停止，停留</li>
+<li>industry n. 工业</li>
+<li>trigger n. &amp; v. 触发器；触发</li>
+<li>lesson n. 功课，教训</li>
+<li>handling n. 处理，操纵</li>
+<li>treat v. 处理，加工</li>
+<li>busy a. 忙碌的，占线的</li>
+<li>usage n. 应用，使用，用法</li>
+<li>difficult a. 困难的，不容易的</li>
+<li>failure n. 失效，故障，失败</li>
+<li>communication n. 通信</li>
+<li>building n. 建造，建筑，房屋</li>
+<li>ally v. 联合，与…关联</li>
+<li>exclamation n. 惊叹(号)</li>
+<li>turning a. 转弯的，旋转的</li>
+<li>whole a. 全部的，整个的</li>
+<li>parent n. 双亲，父代</li>
+<li>connection n. 连接(法)</li>
+<li>connectivity n. 连通性，联络性</li>
+<li>translation n. 翻译，变换，平移</li>
+<li>dynamic a. 动态的，动力的</li>
+<li>foreground n. 前台</li>
+<li>preserve vt. 保存，维持</li>
+<li>vice n. 缺点，毛病，错误</li>
+<li>necessarily ad. 必定，当然</li>
+<li>circle n. 圆，圈，循环，周期</li>
+<li>differ vi. 不同，不一致</li>
+<li>stationary a. 静止的，平稳的</li>
+<li>extract vt. 抽取，摘录，开方</li>
+<li>unrecognized a. 未被认出的</li>
+<li>thereafter ad. 此后，据此</li>
+<li>inverse a. 反向的，逆的</li>
+<li>spell v. 拼写</li>
+<li>limiting n. (电路参数)限制处理</li>
+<li>restructure vt. 调整，重新组织</li>
+<li>delimit vt. 定界，定义</li>
+<li>pay v. 付款，支付</li>
+<li>separately ad. 分别地</li>
+<li>classify vt. 分类，分级</li>
+<li>interfere vi. 干涉，干扰，冲突</li>
+<li>mind n. 愿望，想法，智力</li>
+<li>individually ad. 个别地，单独地</li>
+<li>vertical a. 垂直的，立(式)的</li>
+<li>undesirable a. 不合乎需要的</li>
+<li>lot n. 一块(批，组，套)</li>
+<li>piece n. 一块，部分，段</li>
+<li>unavailable a. 不能利用的</li>
+<li>unlike a. 不象的，不同的</li>
+<li>sit v. 位于，安装</li>
+<li>insufficient a. 不足的，不适当的</li>
+<li>map n. &amp; vt. 图；映射，变址</li>
+<li>figure n. 数字；图，图形，形状</li>
+<li>prepare v. 准备</li>
+<li>consider v. 考虑，认为，设想</li>
+<li>detect vt. 检测</li>
+<li>convenience n. 方便，便利</li>
+<li>method n. 方法，方案</li>
+<li>mean n. &amp; vt. 平均；意味着</li>
+<li>salary n. &amp; vt. 薪水；发工资</li>
+<li>pacific a. 平稳的，太平(洋)的</li>
+<li>strong a. 强的</li>
+<li>emphasize v. 强调，着重，增强</li>
+<li>department n. 部门，门类，系</li>
+<li>forced a. 强制的，压力的</li>
+<li>ansi n. 美国国家标准协会</li>
+<li>permanent a. 永久的</li>
+<li>remark n. 评注，备注</li>
+<li>away ad. 离开，(去)掉</li>
+<li>concatenate vt. 连接，串联，并置</li>
+<li>lightning n. 闪电</li>
+<li>additionally ad. 另外，又</li>
+<li>emulate v. 仿真，模仿；赶上或超过</li>
+<li>tape n. 磁带，纸带</li>
+<li>accidentally ad. 偶然地</li>
+<li>concept n. 概念</li>
+<li>optimize v. 优选，优化</li>
+<li>counter n. 计数器，计算器</li>
+<li>expect vt. 期望，期待，盼望</li>
+<li>subsequently ad. 其后，其次，按着</li>
+<li>registration n. 登记，挂号，读数</li>
+<li>city n. 城市，市区</li>
+<li>designate vt. 任命，标志</li>
+<li>visible a. 可见的，明显的</li>
+<li>consult v. 咨询，顾问</li>
+<li>completely ad. 十分，完全，彻底</li>
+<li>virtually ad. 实际上</li>
+<li>substantially ad. 实质上，本质上</li>
+<li>specialize v. (使)专门化</li>
+<li>fail n. 故障，失效</li>
+<li>primarily ad. 首先，起初，原来</li>
+<li>sequentially ad. 顺序地</li>
+<li>client n. 顾客，买主</li>
+<li>runtime n. 运行时间</li>
+<li>fix v. 固定，定影</li>
+<li>author n. 程序设计者，作者</li>
+<li>programmer n. 程序设计人员</li>
+<li>commercial a. 商业的，经济的</li>
+<li>particularly ad. 特别，格外，尤其</li>
+<li>low a. 低的，浅的，弱的</li>
+<li>sheet n. (图)表，纸，片</li>
+<li>employee n. 雇员</li>
+<li>legal a. 合法的，法律的</li>
+<li>qualified a. 合格的，受限制的</li>
+<li>context n. 上下文，来龙去脉</li>
+<li>involved a. 有关的</li>
+<li>conditional a. 有条件的</li>
+<li>halfway a. 中途的，不彻底的</li>
+<li>oriented a. 有向的，定向的</li>
+<li>pair n. (一)对，一双</li>
+<li>week n. (一)星期，(一)周</li>
+<li>suppressed vt. 抑制，取消</li>
+<li>subroutine n. 子程序</li>
+<li>bracketed a. 加括号的</li>
+<li>manually ad. 用手，手动地</li>
+<li>preset vt. 预置</li>
+<li>autoindex n. 自动变址(数)</li>
+<li>restrict vt. 约束，限制</li>
+<li>performance n. 性能，实绩</li>
+<li>showing n. 显示，表现</li>
+<li>ever ad. 在任何时候，曾经</li>
+<li>distribution n. 分布，分配</li>
+<li>denote vt. 指示，意味着，代表</li>
+<li>cash n. 现金</li>
+<li>repeatedly ad. 重复地</li>
+<li>replicate vt. 重复，复制</li>
+<li>mega n. 兆，百万</li>
+<li>conform vi. 遵从，符合</li>
+<li>rebuild v. 重建，修复，改造</li>
+<li>certainty n. 必然，确实</li>
+<li>controller n. 控制器</li>
+<li>pseudo a. 假的，伪的，冒充的</li>
+<li>manage v. 管理，经营，使用</li>
+<li>administrator n. 管理人，行政人员</li>
+<li>ensemble n. 总体，集合体</li>
+<li>bus n. 总线，信息通路</li>
+<li>allowable a. 容许的，承认的</li>
+<li>limitations n. 限制，边界</li>
+<li>restriction n. 限制，约束，节流</li>
+<li>height n. 高度</li>
+<li>remainder n. 余数，余项，剩余</li>
+<li>traverse v. 横渡，横过，横断</li>
+<li>organization n. 结构，机构，公司</li>
+<li>resulting a. 结果的，合成的</li>
+<li>solution n. 解，解法，解答</li>
+<li>external a. 外部的</li>
+<li>adequate a. 足够的，充分的</li>
+<li>interpretability n. 配合动作性</li>
+<li>vary v. 变化，变换</li>
+<li>gap n. 间隙，间隔，缝隙</li>
+<li>indexing n. 变址，标引，加下标</li>
+<li>board n. 板，插件板</li>
+<li>package n. 插件，(软件)包</li>
+<li>insertion n. 插入，嵌入，插页</li>
+<li>intervene vi插入，干涉</li>
+<li>conflict v. 冲突，碰头</li>
+<li>really a. 真正地，确实地</li>
+<li>overflow v. 溢出，上溢</li>
+<li>charge n. 电荷，充电，负荷</li>
+<li>phone n. 电话，电话机，音素</li>
+<li>virtual a. 虚(拟)的，虚拟</li>
+<li>compose v. 组成，构成，构图</li>
+<li>snapshot n. 抽点打印</li>
+<li>sensitivity n. 灵敏度</li>
+<li>familiar a. 熟悉的，惯用的</li>
+<li>mach n. 马赫(速度单位)</li>
+<li>incorrect a. 错误的，不正确的</li>
+<li>cut v. 割，切</li>
+<li>lowest a. 最低的，最小的</li>
+<li>simple a. 简单的</li>
+<li>subsequent a. 后来的，其次的</li>
+<li>capitalized a. 大写的</li>
+<li>compact a. 紧致的，压缩的</li>
+<li>plain n. 明码</li>
+<li>noted a. 著名的</li>
+<li>desirable a. 所希望的，称心的</li>
+<li>substitution n. 代替，替换，置换</li>
+<li>consume v. 消耗，使用</li>
+<li>forget v. 忘记</li>
+<li>keyed a. 键控的</li>
+<li>overstrike n. 过打印</li>
+<li>tornado n. 旋风，龙卷风</li>
+<li>quotation n. 引证，引用(句)</li>
+<li>ones n. 二进制反码</li>
+<li>parse vt. (语法)分析</li>
+<li>experience vt. &amp; n. 试验</li>
+<li>manufacture vt. &amp; n. 制造(业)，工业</li>
+<li>hundred n. &amp; a. (一)百，百个</li>
+<li>thousand n. &amp; a. (一)千，无数的</li>
+<li>twentieth n. &amp; a. 第二十(的)</li>
+<li>understanding n. &amp; a. 了解的，聪明的</li>
+<li>hand n. &amp; a. 手，手工(动)的</li>
+<li>restricting n. &amp; a. 限制(的)</li>
+<li>fancy n. &amp; a. 想象(的)，精制的</li>
+<li>wide a. &amp; ad. 宽的，广阔的</li>
+<li>fine a. &amp; ad. 微小的，细的</li>
+<li>worry v. &amp; n. (使)烦恼</li>
+<li>somewhat pron. &amp; ad. 稍微，有点</li>
+<li>quiet a. &amp; n. 静态，静止的</li>
+<li>purge v. &amp; n. 清除</li>
+<li>mod a. &amp; n. 时髦的</li>
+<li>numeral n. &amp; n. 数字的，数码</li>
+<li>whichever a. &amp; pron. 无论哪个</li>
+<li>purchase n. &amp; v. 购买</li>
+<li>care n. &amp; v. 关心，注意</li>
+<li>watch n. &amp; v. 监视，观测</li>
+<li>endeavor n. &amp; v. 尽力，力图</li>
+<li>mismatch n. &amp; vt. 失配，不匹配</li>
+<li>printout n. 印出</li>
+<li>ellipsis n. 省略符号，省略(法)</li>
+<li>ship n. 舰，船</li>
+<li>british a. &amp; n. 英国的；英国人</li>
+<li>parallel a. 并行</li>
+<li>custom a. &amp; n. 常规的，惯例；用户</li>
+<li>congratulation n. 祝贺</li>
+<li>protection n. 保护</li>
+<li>glass n. 玻璃</li>
+<li>pattern n. 模式</li>
+<li>insure v. 保证，保障</li>
+<li>stopping n. 停止，制动(状态)</li>
+<li>factory n. 工厂，制造厂</li>
+<li>implement n. &amp; vt. 工具；执行，实现</li>
+<li>effort n. 工作，研究计划</li>
+<li>worker n. 工作人员</li>
+<li>ampersand n. &amp;号(and)</li>
+<li>deal v. 处理，分配，交易</li>
+<li>power n. 功率，电源，幂</li>
+<li>difficulty n. 困难，难点</li>
+<li>lose n. 失去，损失</li>
+<li>magic n. 魔术，幻术</li>
+<li>proprietary a. 专有的</li>
+<li>aware a. 知道的，察觉到的</li>
+<li>numerous a. 为数众多的，无数的</li>
+<li>vowel n. 元音，母音</li>
+<li>closely a. 精密地，仔细地</li>
+<li>accuracy n. 精确度，准确度</li>
+<li>traditional a. 传统的，惯例的</li>
+<li>synchronization n. 同步</li>
+<li>fragment n. 片段，段，分段</li>
+<li>primary a. 原始的，主要的</li>
+<li>safely ad. 安全地，确实地</li>
+<li>habit n. 习惯</li>
+<li>comprise vt. 包括，由…组成</li>
+<li>landler n. 兰德勒舞曲</li>
+<li>absence n. 缺少，没有</li>
+<li>revolutionize vt. 变革，彻底改革</li>
+<li>constantly ad. 不变地，经常地</li>
+<li>seldom ad. 不常，很少，难得</li>
+<li>unfortunately ad. 不幸，遗憾地</li>
+<li>expunge vt. 擦除，删掉</li>
+<li>security n. 安全性，保密性</li>
+<li>touch v. &amp; n. 按，揿，触；触力</li>
+<li>contrast n. 反差，对比，对比度</li>
+<li>invent vt. 创造，想象</li>
+<li>reflect v. 反射</li>
+<li>undone a. 未完成的</li>
+<li>unshift v. 未移动，不移档</li>
+<li>complex a. &amp; n. 复杂的；复数</li>
+<li>complexity n. 复杂性，复杂度</li>
+<li>creation n. 创造，创作</li>
+<li>unknown a. 未知的，无名的</li>
+<li>greatly ad. 大大地，非常</li>
+<li>cost n. 值，价值，成本</li>
+<li>degrade v. 降低，减少，递降</li>
+<li>suggestion n. 暗示，提醒</li>
+<li>real n. 实数，实的，实型</li>
+<li>experimentation n. 实验(工作，法)</li>
+<li>experiment n. 实验，试验(研究)</li>
+<li>substantial a. 实质的，真正的</li>
+<li>solely ad. 独自，单独，只</li>
+<li>announce vt. 发表，宣布</li>
+<li>squeeze v. 挤压</li>
+<li>distribute vt. 分布，配线，配给</li>
+<li>negate vt. 否定，求反，“非”</li>
+<li>capture vt. 俘获，捕捉</li>
+<li>father n. 父，上层(树节点的)</li>
+<li>reinstate vt. 复原，恢复</li>
+<li>tutorial a. 指导的</li>
+<li>nicety n. 细节，精细</li>
+<li>roll n. &amp; v. 案卷；卷动，滚动</li>
+<li>exponent n. 指数，阶，幂</li>
+<li>exponential a. 指数的，幂的，阶的</li>
+<li>prefer vt. 更喜欢，宁愿</li>
+<li>complicated v. 使复杂化，使混乱</li>
+<li>reactivate v. 使恢复活动</li>
+<li>spread v. 展开，传播</li>
+<li>synchronize v. 使同步</li>
+<li>formation n. 构造，结构，形成</li>
+<li>widely ad. 广泛，很远</li>
+<li>comma n. 逗号“,”，逗点</li>
+<li>very ad. 很，非常，最</li>
+<li>unnecessary a. 不必要的，多余的</li>
+<li>unchanged a. 不变的</li>
+<li>cross n. 交叉，十字准线</li>
+<li>yet ad. 还，仍然，至今</li>
+<li>slowly ad. 缓慢地</li>
+<li>inexperienced a. 不熟练的，外行的</li>
+<li>noninteractive a. 不相关的，非交互的</li>
+<li>unwanted a. 不需要的，多余的</li>
+<li>unused a. 不用的，空着的</li>
+<li>unmarked a. 没有标记的</li>
+<li>nothing n. 没有任何东西</li>
+<li>chart n. 图(表)</li>
+<li>dearly ad. 极，非常，昂贵地</li>
+<li>extremely ad. 极端地，非常</li>
+<li>hardly ad. 几乎不，未必</li>
+<li>placement n. 布局</li>
+<li>think v. 考虑，以为，判断</li>
+<li>technical a. 技术的，专业的</li>
+<li>idea n. 思想，观念</li>
+<li>stamp n. 图章</li>
+<li>indirectly ad. 间接地</li>
+<li>equation n. 方程，方程式</li>
+<li>smooth v. &amp; a. 平滑；平滑的</li>
+<li>attached a. 附加的</li>
+<li>average n. 平均，平均数</li>
+<li>quietly ad. 静静地</li>
+<li>discard v. 删除，废除，放弃</li>
+<li>never ad. 决不，从来不</li>
+<li>initiate vt. 开创，起始</li>
+<li>powerful a. 强大的，大功率的</li>
+<li>purpose n. &amp; vt. 目的，用途；打算</li>
+<li>regard vt. 考虑，注意，关系</li>
+<li>daily a. 每日的，日常的</li>
+<li>possibly ad. 可能地，合理地</li>
+<li>potentially ad. 可能地，大概地</li>
+<li>moreover ad. 况且，并且，此外</li>
+<li>american a. 美国的</li>
+<li>guard v. &amp; n. 防护；防护装置</li>
+<li>world n. 世界，全球</li>
+<li>independent a. 独立的</li>
+<li>independently a. 独立地</li>
+<li>continuously ad. 连续不断地</li>
+<li>shield v. 屏蔽，罩，防护</li>
+<li>glance n. 闪烁</li>
+<li>happening n. 事件，偶然发生的事</li>
+<li>transaction n. 事项，事务，学报</li>
+<li>emulation n. 仿真，仿效</li>
+<li>strike v. 敲，击</li>
+<li>dump v. (内存信息)转储</li>
+<li>occasionally ad. 偶尔(地)，不时</li>
+<li>tension n. 张力</li>
+<li>probable a. 概率的，可能的</li>
+<li>talent n. 才能，技能，人才</li>
+<li>financial a. 财务的，金融的</li>
+<li>meter n. 仪表，米</li>
+<li>logged a. 记录的，浸透的</li>
+<li>ware n. 仪器，商品</li>
+<li>disregard vt. 轻视，把…忽略不计</li>
+<li>waiting a. 等待的</li>
+<li>preceding a. 先的，以前的</li>
+<li>comparison n. 比较，对照</li>
+<li>advanced a. 先进的，预先的</li>
+<li>rate n. 比率，速率，费率</li>
+<li>fly v. 飞，跳过</li>
+<li>programmable a. 可编程的</li>
+<li>definable a. 可定义的，可确定的</li>
+<li>readable a. 可读的</li>
+<li>recoverable a. 可恢复的，可回收的</li>
+<li>possibility n. 可能性</li>
+<li>finisher n. 成品机</li>
+<li>applicable a. 可适用的，合适的</li>
+<li>printable a. 可印刷的</li>
+<li>executable a. 可执行的</li>
+<li>essentially ad. 实质上，本来</li>
+<li>confuse vt. 使混乱，干扰</li>
+<li>familiarize vt. 使熟悉，使通俗化</li>
+<li>employe vt. 使用，花费</li>
+<li>suitable a. 适合的，相适宜的</li>
+<li>generation n. (世)代，(发展)阶段</li>
+<li>quality n. 质量，性质，属性</li>
+<li>defective a. 故障的，有毛病的</li>
+<li>interpretable a. 彼此协作的</li>
+<li>interest n. 兴趣，注意，影响</li>
+<li>fourscore n. 八十</li>
+<li>teach v. 教，讲授</li>
+<li>procedural a. 程序上的</li>
+<li>phrase n. 短语，成语</li>
+<li>specifically ad. 特别地，逐一地</li>
+<li>penalty n. 惩罚，罚款，负担</li>
+<li>violate vt. 违犯，妨碍，破坏</li>
+<li>indefinitely ad. 无限地，无穷地</li>
+<li>major a. 较大的，主要的</li>
+<li>higher a. 较高的</li>
+<li>wise a. 聪明的</li>
+<li>becoming a. 合适的，相称的</li>
+<li>equally ad. 相等地，相同地</li>
+<li>enjoy vt. 享受，欣赏，喜爱</li>
+<li>forth ad. 向前</li>
+<li>disappear vi. 消失</li>
+<li>crop v. 切，剪切</li>
+<li>diagonally ad. 斜(对)</li>
+<li>labeled a. 有标号的</li>
+<li>decision n. 判定，决定，决策</li>
+<li>effective a. 有效的</li>
+<li>significant a. 有效的，有意义的</li>
+<li>avail v. &amp; n. 有益于；利益</li>
+<li>hang v. 中止，暂停，挂起</li>
+<li>craze n. &amp; v. 裂纹开裂</li>
+<li>consequently ad. 因此，从而</li>
+<li>introduce vt. 引进，引导</li>
+<li>team n. 队，小组</li>
+<li>visual a. 视觉的，直观的</li>
+<li>acknowledgment n. 接收(收妥)，承认</li>
+<li>efficiently ad. 有效地</li>
+<li>predict vt. 预测，预言</li>
+<li>anticipate vt. 预先考虑，抢…先</li>
+<li>bypass n. 旁路</li>
+<li>nature n. 自然，天然</li>
+<li>natural a. 自然的</li>
+<li>grant vt. 允许，授权</li>
+<li>logarithm n. 对数</li>
+<li>reappears vi. 再现，重现</li>
+<li>reload vt. 再装入</li>
+<li>occupy vt. 占有，充满</li>
+<li>photograph n. 照片；v.照相</li>
+<li>terminating n. 终止，终结，收信</li>
+<li>resolve v. 分辨，解像</li>
+<li>unsafe v. 恢复</li>
+<li>separator n. 分隔符</li>
+<li>hierarchical a. 分级的，分层的</li>
+<li>assortment n. 种类，花色品种</li>
+<li>growing n. 分类，分组，成群</li>
+<li>discussion n. 讨论，商议，论述</li>
+<li>alphabet n. 字母，字母表</li>
+<li>scattered a. 分散的</li>
+<li>eventually ad. 终于，最后</li>
+<li>finally ad. 终于，最后</li>
+<li>subgroup n. 分组，子群</li>
+<li>superimpose vt. 重叠，叠加</li>
+<li>reorganization vt. 重排，改组</li>
+<li>rewrite vt. 重写，再生</li>
+<li>university n. (综合性)大学</li>
+<li>deter vt. 阻止，拦住，妨碍</li>
+<li>pool n. &amp; v. 池，坑；共享</li>
+<li>moment n. 矩，力矩，磁矩</li>
+<li>shut v. 关闭</li>
+<li>closed a. 关闭的，闭迹</li>
+<li>respond v. 回答，响应</li>
+<li>repeating n. 重复，循环</li>
+<li>repetitive a. 重复的</li>
+<li>reenter v. 重新进入</li>
+<li>rearrange v. 重新整理，重新排序</li>
+<li>rectangular a. 矩形的，成直角的</li>
+<li>tag n. 特征，标记，标识符</li>
+<li>suppose v. 假定，推测</li>
+<li>supposed a. 假定的，推测的</li>
+<li>manipulating v. 操纵，操作</li>
+<li>operator n. 操作员，运算符</li>
+<li>masking n. 掩蔽，屏蔽</li>
+<li>price n. 价格</li>
+<li>demonstrate v. 论证，证明，证实</li>
+<li>importance n. 价值，重要</li>
+<li>pipe n. 管，导管</li>
+<li>overall a. 总共的，全部的</li>
+<li>turnkey n. 总控钥匙</li>
+<li>restricted a. 受限制的，受约束的</li>
+<li>suspension n. 暂停，中止，挂起</li>
+<li>seamless a. 无缝的</li>
+<li>clipper n. 限幅器，钳位器</li>
+<li>unsigned a. 无符号的</li>
+<li>unformatted a. 无格式的</li>
+<li>infinite a. 无限的，无穷的</li>
+<li>useless a. 无用的</li>
+<li>limiter n. 限制(幅)器</li>
+<li>mountain n. 高山，山脉</li>
+<li>redundant a. 冗余的</li>
+<li>dependent a. 相关的</li>
+<li>contiguous a. 相连的，邻接的</li>
+<li>consistent a. 相容的，一致的</li>
+<li>multiprocessing n. 多重处理，多道处理</li>
+<li>architecture n. 结构，构造</li>
+<li>structural a. 结构的，结构上的</li>
+<li>outcome n. 结果，成果，输出</li>
+<li>association n. 结合，协会，联想</li>
+<li>opinion n. 意见，见解，判断</li>
+<li>interpret v. 解释</li>
+<li>explanatory a. 解释(性)的</li>
+<li>assemble v. 汇编，装配</li>
+<li>assembler n. 汇编程序</li>
+<li>cad 计算机辅助设计</li>
+<li>arithmetic n. 算术，运算</li>
+<li>varying a. 变化的，可变的</li>
+<li>representative a. 典型的，表示的</li>
+<li>typical a. 典型的，标准的</li>
+<li>sufficient a. 充足的，足够的</li>
+<li>blast v. &amp; n. 清除；爆炸</li>
+<li>clean a. 清洁的，干净的</li>
+<li>caret n. 插入符号</li>
+<li>socket n. 插座，插孔，插口</li>
+<li>stated a. 规定的</li>
+<li>protocol n. 规约，协议，规程</li>
+<li>presence n. 存在，有</li>
+<li>telephone n. 电话</li>
+<li>social a. 社会的</li>
+<li>equipment n. 设备，装备，仪器</li>
+<li>lending n. &amp; a. 借给，出租；借出的</li>
+<li>book n. 书，手册，源程序块</li>
+<li>circumstances n. 情况，环境，细节</li>
+<li>situation n. 情况，状况，势态</li>
+<li>desk n. 书桌，控制台，面板</li>
+<li>please v. 请</li>
+<li>mixture n. 混合物</li>
+<li>representation n. 表示</li>
+<li>esoteric a. 深奥的，奥秘的</li>
+<li>depth n. 深度，浓度(颜色的)</li>
+<li>final a. 最终的</li>
+<li>physically a. 物理上，实际上</li>
+<li>aid n. 帮助，辅助程序</li>
+<li>successive a. 逐次的，相继的</li>
+<li>succession n. 逐次性，连续性</li>
+<li>unpack v. 拆开，卸，分开</li>
+<li>chunk n. 厚块，大部分</li>
+<li>alignment n. 序列，成直线</li>
+<li>typewriter n. 打字机</li>
+<li>big a. 大的，重要的</li>
+<li>tone n. 音调，音色，色调</li>
+<li>sensitive a. 敏感的，灵敏的</li>
+<li>reduction n. 减化，还原，减少</li>
+<li>indentation n. 缩进，缩排</li>
+<li>terminology n. 术语</li>
+<li>ascending a. 增长的，向上的</li>
+<li>augment v. 增加，添加，扩充</li>
+<li>increment n. 增量，加１，递增</li>
+<li>gain n. 增益(系数)</li>
+<li>stream n. 流</li>
+<li>obsolete a. 作废的，过时的</li>
+<li>accommodate v. 调节，适应</li>
+<li>motif n. 主题，要点，特色</li>
+<li>subject n. 主题，源</li>
+<li>job n. 作业</li>
+<li>differentiate v. 区别，分辨</li>
+<li>distinction n. 区别，相异，特性</li>
+<li>distinguish v. 区别，辨识</li>
+<li>locking n. 锁定，加锁</li>
+<li>progress n. 进度，进展</li>
+<li>fundamental a. 基本的，根本的</li>
+<li>basis n. 基础，座</li>
+<li>underlying a. 基础的，根本的</li>
+<li>sound n. 声音，音响</li>
+<li>vital a. 生动的，不可缺少的</li>
+<li>national a. 国家的</li>
+<li>sale n. 销售，销路</li>
+<li>agree v. 符合，相同</li>
+<li>iterative a. 迭代的</li>
+<li>inclusive a. 包括的，内含的</li>
+<li>charm n. 吸引力</li>
+<li>hit v. 命中，瞬时干扰</li>
+<li>course n. 过程，航向，课程</li>
+<li>exceeded a. 过度的，非常的</li>
+<li>numerical a. 数量的，数字的</li>
+<li>digital a. 数字的</li>
+<li>combo n. 二进位组合码</li>
+<li>cord n. 绳子，电线</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/13/Programmer-English-Vocabulary/" data-id="cj3xytx460009arfyfj6d4360" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-iOS-UIKit框架" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/07/iOS-UIKit框架/" class="article-date">
+  <time datetime="2017-06-07T03:25:51.000Z" itemprop="datePublished">2017-06-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/07/iOS-UIKit框架/">iOS UIKit框架</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>NSAttributedString.h<br>NSDataAsset.h<br>NSFileProviderExtension.h<br>NSLayoutAnchor.h<br>NSLayoutConstraint.h<br>NSLayoutManager.h<br>NSParagraphStyle.h<br>NSShadow.h<br>NSStringDrawing.h<br>NSText.h<br>NSTextAttachment.h<br>NSTextContainer.h<br>NSTextStorage.h<br>UIAccelerometer.h<br>UIAccessibility.h<br>UIAccessibilityAdditions.h<br>UIAccessibilityConstants.h<br>UIAccessibilityCustomAction.h<br>UIAccessibilityCustomRotor.h<br>UIAccessibilityElement.h<br>UIAccessibilityIdentification.h<br>UIAccessibilityZoom.h<br>UIActionSheet.h<br>UIActivity.h<br>UIActivityIndicatorView.h<br>UIActivityItemProvider.h<br>UIActivityViewController.h<br>UIAlert.h<br>UIAlertController.h<br>UIAlertView.h<br>UIAppearance.h<br>UIApplication.h<br>UIApplicationShortcutItem.h<br>UIAttachmentBehavior.h<br>UIBarButtonItem.h<br>UIBarButtonItemGroup.h<br>UIBarCommon.h<br>UIBarItem.h<br>UIBezierPath.h<br>UIButton.h<br>UICloudSharingController.h<br>UICollectionView.h<br>UICollectionViewCell.h<br>UICollectionViewController.h<br>UICollectionViewFlowLayout.h<br>UICollectionViewLayout.h<br>UICollectionViewTransitionLayout.h<br>UICollisionBehavior.h<br>UIColor.h<br>UIContentSizeCategory.h<br>UIContentSizeCategoryAdjusting.h<br>UIControl.h<br>UIDataDetectors.h<br>UIDatePicker.h<br>UIDevice.h<br>UIDocument.h<br>UIDocumentInteractionController.h<br>UIDocumentMenuViewController.h<br>UIDocumentPickerExtensionViewController.h<br>UIDocumentPickerViewController.h<br>UIDynamicAnimator.h<br>UIDynamicBehavior.h<br>UIDynamicItemBehavior.h<br>UIEvent.h<br>UIFeedbackGenerator.h<br>UIFieldBehavior.h<br>UIFocus.h<br>UIFocusAnimationCoordinator.h<br>UIFocusGuide.h<br>UIFont.h<br>UIFontDescriptor.h<br>UIGeometry.h<br>UIGestureRecognizer.h<br>UIGestureRecognizerSubclass.h<br>UIGraphics.h<br>UIGraphicsImageRenderer.h<br>UIGraphicsPDFRenderer.h<br>UIGraphicsRenderer.h<br>UIGraphicsRendererSubclass.h<br>UIGravityBehavior.h<br>UIGuidedAccessRestrictions.h<br>UIImage.h<br>UIImageAsset.h<br>UIImagePickerController.h<br>UIImageView.h<br>UIImpactFeedbackGenerator.h<br>UIInputView.h<br>UIInputViewController.h<br>UIInterface.h<br>UIKit.h<br>UIKitDefines.h<br>UILabel.h<br>UILayoutGuide.h<br>UILexicon.h<br>UILocalizedIndexedCollation.h<br>UILocalNotification.h<br>UILongPressGestureRecognizer.h<br>UIManagedDocument.h<br>UIMenuController.h<br>UIMotionEffect.h<br>UINavigationBar.h<br>UINavigationController.h<br>UINib.h<br>UINibDeclarations.h<br>UINibLoading.h<br>UINotificationFeedbackGenerator.h<br>UIPageControl.h<br>UIPageViewController.h<br>UIPanGestureRecognizer.h<br>UIPasteboard.h<br>UIPickerView.h<br>UIPinchGestureRecognizer.h<br>UIPopoverBackgroundView.h<br>UIPopoverController.h<br>UIPopoverPresentationController.h<br>UIPopoverSupport.h<br>UIPresentationController.h<br>UIPress.h<br>UIPressesEvent.h<br>UIPreviewInteraction.h<br>UIPrinter.h<br>UIPrinterPickerController.h<br>UIPrintError.h<br>UIPrintFormatter.h<br>UIPrintInfo.h<br>UIPrintInteractionController.h<br>UIPrintPageRenderer.h<br>UIPrintPaper.h<br>UIProgressView.h<br>UIPushBehavior.h<br>UIReferenceLibraryViewController.h<br>UIRefreshControl.h<br>UIRegion.h<br>UIResponder.h<br>UIRotationGestureRecognizer.h<br>UIScreen.h<br>UIScreenEdgePanGestureRecognizer.h<br>UIScreenMode.h<br>UIScrollView.h<br>UISearchBar.h<br>UISearchContainerViewController.h<br>UISearchController.h<br>UISearchDisplayController.h<br>UISegmentedControl.h<br>UISelectionFeedbackGenerator.h<br>UISlider.h<br>UISnapBehavior.h<br>UISplitViewController.h<br>UIStackView.h<br>UIStateRestoration.h<br>UIStepper.h<br>UIStoryboard.h<br>UIStoryboardPopoverSegue.h<br>UIStoryboardSegue.h<br>UIStringDrawing.h<br>UISwipeGestureRecognizer.h<br>UISwitch.h<br>UITabBar.h<br>UITabBarController.h<br>UITabBarItem.h<br>UITableView.h<br>UITableViewCell.h<br>UITableViewController.h<br>UITableViewHeaderFooterView.h<br>UITapGestureRecognizer.h<br>UITextChecker.h<br>UITextField.h<br>UITextInput.h<br>UITextInputTraits.h<br>UITextInteraction.h<br>UITextView.h<br>UITimingCurveProvider.h<br>UITimingParameters.h<br>UIToolbar.h<br>UITouch.h<br>UITraitCollection.h<br>UIUserNotificationSettings.h<br>UIVideoEditorController.h<br>UIView.h<br>UIViewAnimating.h<br>UIViewController.h<br>UIViewControllerTransitionCoordinator.h<br>UIViewControllerTransitioning.h<br>UIViewPropertyAnimator.h<br>UIVisualEffectView.h<br>UIWebView.h<br>UIWindow.h</p>
+<ol>
+<li>简介:</li>
+</ol>
+<p>UIKitk框架提供一系列的Class(类)来建立和管理iPhone OS应用程序的用户界面( UI )接口、应用程序对象、事件控制、绘图模型、窗口、视图和用于控制触摸屏等的接口。(PS1: 可以认为是操纵界面的一个API库)(PS2: UIKit框架是用在iOS平台上与之对应的是MAC OS X上的Application Kit，二者是姐妹框架，作用和目的没啥太大区别(我没有说实现目的的过程也一样)，表混淆了)</p>
+<ol>
+<li>框架的入口：</li>
+</ol>
+<p>＃import <uikit uikit.h=""> </uikit></p>
+<p>当引入此头文件后，便可以在程序里使用任何在UIKit里声明的类。(PS: 当然还要把这个框架链接到你的应用程序中)。</p>
+<p>3、框架中，每个类的简单说明（原文链接：<a href="http://www.cnblogs.com/hellozhuzi/p/5634332.html）" target="_blank" rel="external">http://www.cnblogs.com/hellozhuzi/p/5634332.html）</a></p>
+<p>1.UIAcceleration:</p>
+<p>被叫做加速事件的一个UIAcceleration类的实例是用来代表即时的三维加速数据。为了接收重力加速度，要注册一个应用应用程序作为一个共享UIAccelerater对象的委托对象（参考UIAcceleromete类）。</p>
+<ol>
+<li>UIAccelerater:</li>
+</ol>
+<p>UIAccelerater类可以让你的寄存器接收到从板载硬件上得到的加速相关数据。当设备移动时，它的硬件能够报告沿主线在三维空间中的线性加速度变化。你可以利用这些数据来检测器件的电流方向和该方向的瞬时变化。你可以使用这瞬时变化输入到一个游戏或者启动应用程序中的一些行动。</p>
+<ol>
+<li>UIaccessibilityElement</li>
+</ol>
+<p>UIAccessibilityElement类封装的项目信息对一些特殊的人可见，默认情况下是不可访问的。例如，一个图标或文字图像不会自动访问，因为它没有继承的UIView（或UIControl）。一个包含等非视图的项目，创建一个实例来表示每个项目需要访问的UIAccessibilityElement。</p>
+<p>4.UIBarItem</p>
+<p>UIBarItem是一个抽象的超类用来在屏幕的底部给项目加上一栏。带栏的条目类似于一个按钮的方式。他们有标题，有图片，动作和目标。你可以在项目中启用和禁用一个带栏条目。</p>
+<p>（1）UIBarButtonItem</p>
+<p>一个栏按钮项目是放置在一个UIToolbar或UINavigation对象专门的按钮。它从它的抽象父类，UIBarItem继承的基本按钮的行为。UIBarButtonItem定义额外的初始化方法和属性，使用工具栏和导航栏。</p>
+<p>（2）UITabBarItem</p>
+<p>UITabBarItem类实现了一个带标签栏的项目，UITabBar类的实例。一个标签栏严格地以收音机模式来运作，其中一个项目是在选定的时间，点击标签栏项目切换上面的标签栏。您还可以指定在标签栏上项目的信息，例如加入额外的视觉徽章值，电话应用程序上使用该项目的徽章，以显示新邮件的数量。这个类还提供了一些系统默认创建的项目。</p>
+<p>5.UIBezierPath</p>
+<p>UIBezierPath类，您可以定义一个路径由直线和曲线的线段组成，并呈现在您的自定义视图路径。您可以使用这个类，最初只是为您的路径中指定的几何形状。路径可以定义简单的形状，如矩形，椭圆形和圆弧，或他们可以定义</p>
+<p>杂的多边形，采用直线和曲线线段的混合物。定义的形状后，您可以使用这个类的其他方法来呈现当前图形上下文的路径。</p>
+<p>6.UIColor</p>
+<p>一个UIColor对象代表的颜色，有时不透明（alpha值）。您可以使用UIColor对象来存储颜色数据，并在绘画过程中，你可以用它们来设置当前填充和笔触颜色。</p>
+<p>7.UIDecive</p>
+<p>UIDevice类提供了一个单个实例代表当前设备。从这个实例中，可以获取有关设备的唯一的ID，分配名称，设备型号，和操作系统名称和版本等信息。您也可以使用的UIDevice实例，检测设备的特点，如物理方向的变化。使用方向属性得到当前的方向，或注册UIDeviceOrientationDidChangeNotification通知收到更改通知。在使用这些技术来获得定位数据之前，你必须使数据传递，使用的beginGeneratingDeviceOrientationNotifications方法。当您不再需要跟踪设备的方向，调用endGeneratingDeviceOrientationNotifications方法来禁用交付的通知..</p>
+<p>8.UIDocumentInteractionController</p>
+<p>一个文件交互控制器一起委托对象，提供应用程序管理与本地系统中的文件的用户交互的支持。例如，一个电子邮件程序可能使用这个类，允许用户预览附件和其他应用程序中打开它们。使用这个类，目前预览相应的用户界面，打开，复制或打印指定的文件。</p>
+<p>9.UIEvent</p>
+<p>一个UIEvent对象（或者简单地说，一个事件对象）代表在IOS的事件。一般有三种类型的事件：触摸事件，运动事件和远程控制的事件，。远程控制的事件使一个Responder对象来接收来自外部的附件或耳机的命令，以便它可以管理管理音频和视频，例如，播放视频或跳过到下一音轨。</p>
+<p>10.UIFont</p>
+<p>UIFont类提供了用于获取和设置字体信息的接口。类提供了访问字体的特点，还提供了访问，这是在布局过程中中使用的字体的字形信息系统。他们通过接受它们作为参数的方法，您可以使用字体对象。</p>
+<p>11.UIGestureRecognizer</p>
+<p>UIGestureRecognizer是一个具体的手势识别类的抽象基类。一个手势识别对象（或简单地说，一个手势识别）中分离出来承认这种认识上的姿态和行动的逻辑。当这些对象之一承认一个共同的姿态，或者，在某些情况下，改变的姿态，它发送一个动作消息，每一个指定的目</p>
+<p>物镜。以下胃具体的子类：</p>
+<p>（1）UITapGestureRecognizer</p>
+<p>单个或多个塞子。指定数量的手指必须要承认的姿态，挖掘查看指定的次数。</p>
+<p>（2）UIPinchGestureRecognizer</p>
+<p>看起来捏的手势，涉及两个接触。当用户将两个手指，向对方的传统意义是缩小;当用户将两个手指从彼此远离，传统意义变焦。</p>
+<p>（3）UIRotationGestureRecognizer</p>
+<p>看起来轮换涉及两个触摸手势。当用户移动手指对面对方的圆周运动，基本的观点应该在相应的方向和速度旋转。</p>
+<p>（4）UISwipeGestureRecognizer</p>
+<p>看起来刷卡在一个或多个方向的手势。抨击是一个独立的姿态，因此，相关的操作的消息发送每个手势只有一次。</p>
+<p>（5）UIPanGestureRecognizer</p>
+<p>看起来平移（拖动）的手势。用户必须按查看上一个或更多的手指，而他们平移。实施这个手势识别动作方法的客户端可以要求它目前的翻译和手势的速度。</p>
+<p>(6)UILongPressGestureRecognizer</p>
+<p>看起来长按手势。用户必须按下一个或更多的手指行动讯息传送至少指定期限。此外，手指可能要承认的姿态移动唯一指定的距离;如果他们超越这个限制的姿态失败。</p>
+<p>12.UIImage</p>
+<p>一个UIImage对象是一个高层次的的方式来显示图像数据。您可以从文件中创建的图像，从石英图像中的物体，或从您收到的原始图像数据。UIImage的类还提供图像绘制到当前图形的上下文中，使用不同的混合模式和不透明度值的几种选择。</p>
+<p>13.UILocalizedIndexedCollation</p>
+<p>UILocalizedIndexedCollation类方便为有部分指数的图表进行组织，整理，以及数据本地化。表视图的数据源，然后使用排序对象提供的输入节的标题和节索引标题的表视图。</p>
+<p>14.UILocalNotification</p>
+<p>UILocalNotification实例表示，应用程序可以提交给它的用户在特定的日期和时间安排的通知。操作系统是负责在适当的时间提供通知;没有要运行发生的应用程序。虽然本地的通知类似，因为它们是用于显示警报，播放声音和徽章的应用程序图标，远程通知，它们是组成和本地传递，不需要与远程服务器连接。</p>
+<p>15.UIMenuController</p>
+<p>他单身UIMenuController实例介绍了菜单界面的剪切，复制，粘贴，选择，选择，和删除命令。</p>
+<p>16.UINavigationItem</p>
+<p>UINavigationItem类封装了一个UINavigationBar对象的堆栈上推导航项目的信息。一个导航栏是用于控制导航层次的内容。一个UINavigationItem指定什么是导航栏上的显示，当它是顶部的项目，也代表它是如何时，后面的项目。</p>
+<p>17.UINib</p>
+<p>UINib类的实例作为对象包装或容器，InterfaceBuilder的nib文件。一个UINib对象在内存中缓存的一个nib文件的内容，准</p>
+<p>解档和实例。当您的应用程序需要实例化的nib文件的内容，它可以这样做，而不必从nib文件加载数据，从而提高性能。UINib对象可以自动释放该缓存笔尖数据免费为您的应用程序内存在低内存条件下，重新装载数据下一次你的应用程序实例笔尖。您的应用程序应该使用UINib对象时，它需要反复实例相同的笔尖数据。例如，如果您的表视图使用nib文件实例表视图细胞，缓存中UINib对象的笔尖可以提供显着的性能改善。</p>
+<p>18.UIPasteboard</p>
+<p>UIPasteboard类允许应用程序共享应用程序内部或与其他应用程序使用的全系统或应用程序特定的黏贴板的数据。</p>
+<p>19.UIPopoverController</p>
+<p>UIPopoverController类是用于管理在popover中内容的呈现。你使用popovers暂时地呈现目前信息暂时而且用一种不超过整个屏幕就像一个模态视图的方式。popover内容是你在一个特殊类型的窗口的现有内容上分层。popover仍然可见，直到用户水龙头以外的popover窗口或你明确驳回。Popover控制器为iPad等设备的提供使用仅限。尝试在其他设备结果出现异常时进行新的一个创建。</p>
+<p>20.UIPrintFormatter</p>
+<p>UIPrintFormatter时打印格式化的抽象基类：展示了传统的可打印的内容对象可以跨页边界。由于打印格式化，打印系统，可以自动打印与打印格式化的内容相关联的类型。以下为UIPrintFormatter的子类：</p>
+<p>(1)UISimpleTextPrintFormatter</p>
+<p>UISimpleTextPrintFormatter类的实例进行布局打印纯文本，可能是多个页面。类允许您指定的印刷文字全球的字体，颜色，对齐线，和换行符的模式属性。</p>
+<p>(2)UIMarkupTextPrintFormatter</p>
+<p>UIMarkupTextPrintFormatter类的实例展示了一个多页打印作业的HTML标记文本。</p>
+<p>(3)UIViewPrintFormatter</p>
+<p>UIViewPrintFormatter类的一个实例，勾画出用于打印的视图绘制的内容。视图的内容可以跨越多个页面。</p>
+<p>21.UIPrintInfo</p>
+<p>一个UIPrintInfo对象封装了有关打印作业的信息，包括打印机标识，作业名称，输出类型（照片，正常，灰阶），方向（纵向或横向），和任何选定的双工模式，。打印系统打印时，使用此信息。</p>
+<p>22.UIPrintInteractionController</p>
+<p>UIPrintInteractionController类的共享实例，提出了印刷的用户界面和管理的文件，图像和其他可打印的内容在iOS打印。UIPrintInteractionController是IOS中央印刷类。它的共享实例代表一个打印作业。打印作业，包括其印刷相关的信息和选项，如输出类型，作业名称，纸张大小和方向，要打印的内容。</p>
+<p>23.UIPrintPageRenderer</p>
+<p>一个UIPrintPageRenderer对象绘制要打印页的内容带或不带打印格式化.A页面的渲染就是UIPrintPageRenderer自定义子类的一个实例。当您撰写打印作业使用的UIPrintInteractionController共享实例，您指定的页面渲染到该实例的printPageRenderer属性。</p>
+<p>24.UIPrintPaper</p>
+<p>UIPrintPaper类的一个实例封装使用的纸张尺寸，打印作业，并在其中的内容可以打印的矩形。</p>
+<p>25.UIResponder</p>
+<p>UIResponder类定义了一个接口，应对和处理事件的对象。它是UIApplication，UIView和它的子类（包括UIWindow中）的超类。这些类的实例有时被称为作为响应者对象或简单地说，应答。</p>
+<p>（1）UIApplication</p>
+<p>UiApplication类，提供了一个在iOS上运行的应用程序的控制和协调集中点。每个应用程序必须具有完全的UIApplication的一个实例（或子类UIApplication）。当一个应用程序启动时，UIApplicationMain函数被调用，在其他任务中，这个函数创建了一个单身的UIApplication对象。此后，您可以通过这个对象调用sharedApplication类方法。</p>
+<p>（2）UIViewController</p>
+<p>UIViewController类提供iPhone应用程序的基本观点的管理模式。基本视图控制器类支持相关联的视图的演示，为管理模式视图提供支持，并支持在响应设备方向变化旋转的意见。象UINavigationController和UITabBarController的这样的子类，如提供管理复杂的层次结构视图控制器和视图的其他行为。</p>
+<p>1）UITabBarController</p>
+<p>UITabBarController类实现了一个专门的视图控制器管理一个广播式的选择界面。不适用于这个类的子类。相反，您可以使用它的实例去呈现允许用户在不同的操作模式之间进行选择的接口。这个标签栏界面显示在窗口底部的制表符之间的不同模式从而用来显示模式的意见选择。</p>
+<p>2）UITableViewController</p>
+<p>UITableViewController类创建一个控制器对象，管理表视图。</p>
+<p>3）UINavigationController</p>
+<p>UINavigationController的类实现了一个专门的视图控制器管理层次的内容导航。不适用于这个类的子类。相反，您可以使用实例当你希望你的应用程序的用户界面能够反映您的内容的层次性。此导航界面使你更有效的展现数据而且更容易让用户浏览内容。</p>
+<p>3－1）UIImagePickerController</p>
+<p>UIImagePickerController类管理定制的和系统提供的用户界面，支持的设备上的图片和电影，并选择把使用的图片和电影保存在您的应用程序中。的图像选取器控制器管理用户交互和委托对象提供这些相互作用的结果。</p>
+<p>3－2）UIVideoEditorController</p>
+<p>一个UIVideoEditorController对象，或视频编辑器，通过修剪从以前录制的电影的开始和结束的视频帧，以及重新编码降低质量来管理系统提供的用户界面。对象管理的用户交互，并提供您的委托对象编辑的电影文件系统路径。UIVideoEditorController类的特点是仅适用于设备，支持视频录制。</p>
+<p>（3）UIView</p>
+<p>UIView类通过定义一个在屏幕和界面上的矩形区域来管理这块区域的内容。在运行时，视图对象处理其区域内的任何内容渲染，还处理与该内容的任何相互作用。UIView类本身提供了基本行为的背景颜色填充矩形区域。更加复杂的内容，可以通过继承UIView和实施必要的绘图和自身事件处理代码来展现。UIKit框架还包括一个</p>
+<p>准的子类可以使用的范围从简单的按钮到复杂的表集。例如，一个UILabel对象绘制一个文本字符串和一个UIImageView对象绘制一个图像。</p>
+<p>1）UIWindow</p>
+<p>UIWindow类定义，管理和协调的Windows应用程序显示在屏幕上的对象（如Windows）。一个窗口的两个主要职能是，为显示其意见面积和分发活动的意见。窗口是在视图层次的根。一个窗口属于一个级别；一个级别的窗口出现另一个层面以上。例如，警报出现高于正常的窗口。通常情况下，只有一个在IOS应用程序的窗口。</p>
+<p>2）UILabel</p>
+<p>UILabel类实现一个只读的文本视图。您可以使用这个类的静态文本，如你可能会使用它来识别你的用户界面的其他部分，绘制一个或多个行。基本UILabel类提供控制文本的外观，包括它是否使用了一层阴影，或汲取的一大亮点。如果需要，您可以自定义文本的外观进一步通过继承。</p>
+<p>3）UIPickerView</p>
+<p>UIPickerView类实现对象，所谓的选择器的看法，即使用一个纺车或老虎 机的比喻来显示一个或多个值集。用户可以选择旋转的车轮，使所需的行的值与选择的指</p>
+<p>之间的对应关系值。UIDatePicker类使用一个自定义子类的UIPickerView显示日期和时间。为了看一个例子，挖掘在时钟应用程序报警窗格添加(“+”)按钮。</p>
+<p>4）UIProgressView</p>
+<p>当一个邮件应用程序下载消息时它的进度条会在应用程序的底部显示。UIProgressView类提供了管理风格的进度条，用于获取和设置值是固定的任务的进度的属性。</p>
+<p>5）UIActivityIndicatorView</p>
+<p>UIActivityIndicatorView类创建和管理一个指标用来显示不确定的任务进度。从外观上看，这个指</p>
+<p>是一个“齿轮”是动画旋转。</p>
+<p>6）UIImageView</p>
+<p>图像的视图对象提供了一个用于显示单个图像或者一系列动画图像的基于视图的容器。对于动画图像，UIImageView的类提供设置动画的持续时间和频率的控制。您还可以启动和停止动画自由。</p>
+<p>7）UITabBar</p>
+<p>UITabBar类实现了一个选择两个或多个按钮的控制，并称之为项目。一个标签栏最常见的用途是实现一个模态接口攻一个项目的变化选择。如果你想暂时突出或不会改变某个项目的外观时，轻按按钮，使用一个UIToolbar对象。UITabBar类提供为用户定制能力重新排列标签栏，删除和酒吧中添加项目。您可以使用标签栏的委托，以增加这种行为。</p>
+<p>8）UIToolBar</p>
+<p>一个工具栏是显示一个或多个按钮被称之为工具栏项一种控制。当被轻按时工具栏瞬间突出或不改变某个项目的外观。</p>
+<p>9）UINavigationBar</p>
+<p>UINavigationBar类实现了一个层次的内容导航控制。它的一个条形栏，通常显示在屏幕上方，包含用于导航的向上和向下一个层次的按钮。主要属性是左（后退）按钮，中心的名称和一个可选的右边的按钮。您可以指定这些自定义视图。</p>
+<p>10）UITableViewCell</p>
+<p>的UITableViewCell类定义的细胞出现在UITableView的对象的属性和行为中。</p>
+<p>11）UIActionSheet</p>
+<p>使用UIActionSheet类可以把一套如何继续给定任务的替代品给用户。您还可以使用行动表，以提示用户确认是否有潜在危险的行动。该行动表包含一个可选的标题和一个或多个按钮，其中每个对应采取的行动。</p>
+<p>12）UIAlterView</p>
+<p>使用UIAlertView类向用户显示一条警告消息。警报视图的功能相似，但在外观上不同于一个动作表（UIActionSheet的一个实例）。</p>
+<p>13）UIScrollView</p>
+<p>UIScrollView的类提供支持显示的内容是大于应用程序的窗口大小。它可以使用户内滚动的内容，通过刷卡手势，和捏的手势放大和部分内容。</p>
+<p>13－1）UITextView</p>
+<p>UITextView的类实现一个滚动的，多行文本区域的行为。类支持使用自定义字体，颜色，和对齐的文本的显示，同时还支持文本编辑。通常可以使用一个文本视图，显示多行文本，如显示一个大的文本文件的身体时，。</p>
+<p>13－2）UITableView</p>
+<p>的UITableView（或简单地说，表视图）的一个实例是用于显示和编辑分层列出的信息的一种手段。</p>
+<p>14）UISearchBar</p>
+<p>UISearchBar类实现一个基于文本的搜索的文本字段控制。该控件提供了一个搜索按钮，输入文字的文本字段书签“按钮，一个取消按钮。UISearchBar对象实际上并不执行任何搜索。您可以使用委托，符合UISearchBarDelegate协议的对象，实施行动时，输入文本和按钮被点击。</p>
+<p>15）UIWebView</p>
+<p>您使用了UIWebView类，在您的应用程序中嵌入网页内容。要做到这一点，你只需创建一个UIWebView对象，将它附加到一个窗口，它发送一个请求加载网页内容。您也可以使用这个类在网页的历史向前和向后移动，你甚至可以设置一些网页内容属性的编程。</p>
+<p>16）UIControl</p>
+<p>UIControl是为控制对象，如用户的意图传达到应用程序的按钮和滑块的基类。你不能直接使用UIControl类实例化控制。相反，它定义了共同的界面和它的所有子类的行为结构。</p>
+<p>16－1）UIButton</p>
+<p>UIButton的类的一个实例，实现了在触摸屏上的按钮。触摸一个按钮拦截事件和动作消息发送到目标对象时。设定的目</p>
+<p>和行动方法都继承自UIControl。这个类提供了方法来设置标题，图像，按钮等外观属性。通过这些访问，您可以为每个按钮状态指定一个不同的外观。</p>
+<p>16－2）UIDatePicker</p>
+<p>UIDatePicker类实现了一个对象，它使用多个旋转的车轮，以允许用户选择日期和时间。iPhone的例子是一个日期选择器，定时器和闹钟设置闹钟的时钟应用程序中的窗格。您也可以使用日期选择器作为一个倒数计时器。</p>
+<p>16－3）UIPageControl</p>
+<p>您可以使用UIPageControl类来创建和管理页面控制。一个页面控制是在控制中心的点继承。每个点对应一个应用程序的文档（或其他实体的数据模型）页面，白色圆点表示当前浏览的网页。</p>
+<p>16－4）UISegmentedControl</p>
+<p>一个UISegmentedControl对象是横向控制多个段，每个段作为一个独立的按钮运作。分段控制提供一个紧凑的手段，组合到一起的控制。</p>
+<p>16－5）UITextField</p>
+<p>UITextField对象是一个显示可编辑的文字和动作消息发送到目标对象，当用户按下返回按钮控制。通常可以使用这个类从用户收集少量的文字，并执行一些立即采取行动，如搜索操作，根据该文本。</p>
+<p>16－6）UISlider</p>
+<p>一个UISlider对象是一个可视化的控制，用来选择一个连续值范围从单一的值。滑块始终显示为单杠。指</p>
+<p>，或拇指，注意到滑块的当前值，并更改设置的用户可以通过移动。</p>
+<p>16－7）UISwitch</p>
+<p>您可以使用UISwitch类来创建和管理ON/ OFF按钮，您会看到，例如在飞行模式等服务的偏好设定（设定）。这些对象被称为开关。</p>
+<p>26.UIScreen</p>
+<p>一个UIScreen对象包含设备的整个屏幕的边界矩形。当设置应用程序的用户界面，你应该使用这个对象的属性，能为您的应用程序的窗口的建议的框架矩形。</p>
+<p>27.UIScreenMode</p>
+<p>一个UIScreenMode对象表示的，可以应用到一个UIScreen对象的属性可能。该对象封装了有关屏幕的底层显示缓冲区的大小和使用单个像素的宽高比信息。</p>
+<p>28.UISearchDisplayController</p>
+<p>搜索显示控制器管理一个搜索栏，显示表视图显示另一种观点认为控制器管理的数据搜索的结果。</p>
+<p>29.UITextChecker</p>
+<p>您使用的UITextChecker类的实例来检查拼写错误的单词字符串（通常是文档中的文本）。</p>
+<p>30.UITextPosition</p>
+<p>一个UITextPosition对象代表一个文本容器中的位置，换句话说，它是一个到在文本显示的支持字符串的索引。</p>
+<p>31.UITextRange</p>
+<p>一个UITextRange对象代表一个字符在文本容器的范围，换句话说，它确定一个起始索引和结束索引一个字符串，支持一个文本输入对象。</p>
+<p>32.UITouch</p>
+<p>一个UITouch对象表示存在一个特定事件的屏幕上用手指或运动。你可以通过UIEvent对象传递到事件处理响应对象UITouch对象。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/07/iOS-UIKit框架/" data-id="cj3xytx420007arfyasx8781h" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Technology-blog" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/07/Technology-blog/" class="article-date">
+  <time datetime="2017-06-07T02:05:33.000Z" itemprop="datePublished">2017-06-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/07/Technology-blog/">Technology blog</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://www.cnblogs.com/kenshincui/" target="_blank" rel="external">kenshincui</a>  </p>
+<p><a href="http://blog.csdn.net/peng_hong_fu/article/details/52805408" target="_blank" rel="external">Markdown支持的语言</a></p>
+<p><a href="http://www.jianshu.com/p/834f5a824aee" target="_blank" rel="external">iOS项目分析及优化</a></p>
+<p><a href="https://shengpan.net/#blog" target="_blank" rel="external">PPPan’s 平凡之路</a>  </p>
+<p><a href="http://www.yiibai.com/objective_c/" target="_blank" rel="external">易百教程 » Objective-C教程</a>  </p>
+<p><a href="https://stackoverflow.com/documentation/objective-c/topics" target="_blank" rel="external">Stackoverflow.com Objective-C Language</a>  </p>
+<p><a href="https://stackoverflow.com/documentation" target="_blank" rel="external">stackoverflow-documentation</a> </p>
+<p><a href="http://www.cnblogs.com/zhangguiguang/" target="_blank" rel="external">丿繁华落尽</a></p>
+<p><a href="http://www.jianshu.com/p/b936814348ab" target="_blank" rel="external">沙盒文件以及沙盒文件路径、和本地存储</a>  </p>
+<p><a href="https://github.com/ChenYilong/iOSInterviewQuestions" target="_blank" rel="external">iOS面试题集锦</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/07/Technology-blog/" data-id="cj3xytx3t0003arfykm8x59rh" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-ios中assign、copy-、retain、strong、weak的区别" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/07/ios中assign、copy-、retain、strong、weak的区别/" class="article-date">
+  <time datetime="2017-06-07T01:33:42.000Z" itemprop="datePublished">2017-06-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/07/ios中assign、copy-、retain、strong、weak的区别/">ios中assign、copy 、retain、strong、weak的区别</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>assgin、retain、copy<br>引用计数</p>
+<p>在ObjC中每个对象内部都有一个与之对应的整数（retainCount），叫“引用计数器”，当一个对象在创建之后它的引用计数器为1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器自动在原来的基础上加1（ObjC中调用一个对象的方法就是给这个对象发送一个消息），当调用这个对象的release方法之后它的引用计数器减1，如果一个对象的引用计数器为0，则系统会自动调用这个对象的dealloc方法来销毁这个对象。</p>
+<p>比较</p>
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>引用计数</th>
+<th>set方法处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>assign</td>
+<td>不变</td>
+<td>直接赋值</td>
+</tr>
+<tr>
+<td>retain</td>
+<td>＋1</td>
+<td>先release原来到值，再retain新值</td>
+</tr>
+<tr>
+<td>copy</td>
+<td>＋1</td>
+<td>先release原来到值，再copy新值</td>
+</tr>
+</tbody>
+</table>
+<p>对于设置了关键字的属性a：</p>
+<p>@property (nonatomic,关键字) NSObject *a;<br>当使用了不同的关键字后自动实现的set方法：</p>
+<p>assign<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-(<span class="keyword">void</span>)setA:(<span class="keyword">int</span>)a&#123;</div><div class="line">        _a=a;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>retain<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">-(<span class="keyword">void</span>)setA:(Car *)a&#123;</div><div class="line">       <span class="keyword">if</span>(_a!=a)&#123;</div><div class="line">           [_a release];</div><div class="line">           _a=[a <span class="keyword">retain</span>];</div><div class="line">       &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>copy<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">-(<span class="keyword">void</span>)setA:(<span class="built_in">NSString</span> *)a&#123;</div><div class="line">       <span class="keyword">if</span>(_a!=a)&#123;</div><div class="line">          [_a release];</div><div class="line">          _a=[a <span class="keyword">copy</span>];</div><div class="line">       &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>深拷贝(mutableCopy)和浅拷贝(copy)：</p>
+<p>深拷贝就是内容拷贝，浅拷贝就是指针拷贝。</p>
+<p>copy vs retain</p>
+<p>retain和strong都是指针拷贝。当有其他对象引用当前对象时，会拷贝一份当前对象的地址，这样它就也指向当前对象了。所以，还是同一个对象，只是retainCount+1；</p>
+<p>copy:对于不可变对象copy采用的是浅复制，引用计数器加1（其实这是编译器进行了优化，既然原来的对象不可变，复制之后的对象也不可变那么就没有必要再重新创建一个对象了）；对于可变对象copy采用的是深复制，引用计数器不变（原来的对象是可变，现在要产生一个不可变的当然得重新产生一个对象）；<br>浅复制如下：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span> *str1 = <span class="string">@"123"</span>;</div><div class="line"><span class="built_in">NSString</span> *str2 = [str1 <span class="keyword">copy</span>];</div></pre></td></tr></table></figure></p>
+<p>ARC<br>ARC是自iOS 5之后增加的新特性，完全消除了手动管理内存的烦琐，编译器会自动在适当的地方插入适当的retain、release、autorelease语句。你不再需要担心内存管理,因为编译器为你处理了一切。</p>
+<p>强引用和弱引用</p>
+<p>强引用：当前对象被其他对象引用时，会执行retain操作，引用计数器+1。当retainCount=0时，该对象才会被销毁。因为我们要进行对象的内存管理，所以这是默认的引用方式。（默认是强引用）</p>
+<p>弱引用：当前对象的生命周期不被是否由其他对象引用限制，它本该什么时候销毁就什么时候被销毁。即使它的引用没断，但是当它的生存周期到了时就会被销毁。</p>
+<p>在定义属性时，若声明为retain类型的，则就是强引用；若声明为assign类型的，则就是弱引用。后来内存管理都由ARC来完成后，若是强引用，则就声明为strong；若是弱引用，则就声明为weak。</p>
+<p>所以说，retain和strong是一致的（声明为强引用）；assign和weak是基本一致的（声明为弱引用）。之所以说它俩是基本一致是因为它俩还是有所不同的，weak严格的说应当叫“归零弱引用”，即当对象被销毁后，会自动的把它的指针置为nil，这样可以防止野指针错误。而assign销毁对象后不会把该对象的指针置nil，对象已经被销毁，但指针还在痴痴的指向它，这就成了野指针，这是比较危险的。</p>
+<p>避免“强引用循环“的僵局：</p>
+<p>　　默认的引用方式是强引用，但上面说了有时我们还得使用弱引用，那是什么情况呢？</p>
+<p>　　答案，强引用循环：A对象强引用了B对象，B对象也强引用了A。因为都是强引用，也就是无论是A是B都要在对方的引用断了后才能销毁，但要断了引用，就必须对方对象销毁。就会出现这种僵局，为了避免出现这种情况，就应该有一个对象“示弱”，使其为“弱引用”。</p>
+<p>　　比较常见的，视图中的父子视图之间的引用：父视图强引用子视图，子视图弱引用父视图。</p>
+<p>总结：由于要进行内存管理的缘故，OC里的引用默认都是强引用，但为了避免出现”强引用循环僵局“，所以有了弱引用（assign）。</p>
+<hr>
+<p>举个例子：</p>
+<p>常见的写法：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">@property</span>(atomic,<span class="keyword">retain</span>,<span class="keyword">readwrite</span>) Dog *dog;</div></pre></td></tr></table></figure></p>
+<p>1、第一个位置的值：<br>atomic:线程保护的，默认<br>nonatomic:线程不保护的<br>2、第二个位置的值：<br>assign:直接赋值，默认<br>retain:保留对象,内部会自动调用retain方法，引用计数+1<br>copy:拷贝对象<br>3、第三个位置的值：<br>readwrite:生成get/set方法，默认<br>readonly:只生成get方法<br>主要是第二位置的值不易区分，接下来我们看看</p>
+<p>1.关于assign、copy 、retain等关键字之间含义和区别？</p>
+<p>assign： 简单赋值，不更改索引计数<br>copy： 建立一个索引计数为1的对象，然后释放旧对象<br>retain：释放旧的对象，将旧对象的值赋予输入对象，再提高输入对象的索引计数为1<br>区别:<br>Copy其实是建立了一个相同的对象，而retain不是：<br>比如: 一个NSString对象，地址为0×1111，内容为@”STR”<br>Copy到另外一个NSString之 后，开辟一片新内存空间来存储，地址为0×2222，内容相同，新的对象retain为1， 旧有对象没有变化<br>retain到另外一个NSString之 后，地址相同（建立一个指针，指针拷贝），内容当然相同，这个对象的retain值+1<br>也就是说，retain是指针拷贝，copy是内容拷贝。在拷贝之前，都会释放旧的对象。</p>
+<p>使用assign: 对基础数据类型 （NSInteger）和C数据类型（int, float, double, char,等）<br>使用copy： 对NSString<br>使用retain： 对其他NSObject和其子类<br>举个例子:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NSString *houseOfMM = [[NSString alloc] initWithString:'北京别墅房'];</div></pre></td></tr></table></figure></p>
+<p>上面一段代码会执行以下两个动作:<br>1 在堆上分配一段内存用来存储@”北京别墅房 “ ,比如:内存地址为 0X1111 内容为 ‘“北京别墅房” ，<br>2 在栈上分配一段内存用来存储 houseOfMM ,比如:地址为 0XAAAA 内容自然为 0X1111 下面分别看下(assign,retain,copy):<br>1.assign的情况:<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span>  * myHouse  = [ houseOfMM   <span class="keyword">assign</span> ];</div></pre></td></tr></table></figure></p>
+<p>此时 myHouse 和 houseOfMM 完全相同,地址都是 0XAAAA ,<br>内容为 0X1111 ,即 myHouse 只是 houseOfMM 的别名,对任何一个操作就等于对另一个操作。<br>因此 retainCount 不需要增加.(同进同出，关系好，一把钥匙，给我拿着)</p>
+<p>2.retain的情况：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span>  *  myHouse  = [ houseOfMM   <span class="keyword">retain</span> ];</div></pre></td></tr></table></figure></p>
+<p>此时 myHouse 的地址不再为 0XAAAA ,可能为 0XAABB ,但是内容依然为 0X1111 .<br>因此 myHouse 和 houseOfMM 都可以管理’ 北京别墅房 ‘所在的内存。<br>因此 retainCount 需要增加1.（有些独立，各自进出，两把钥匙）<br>3.copy的情况：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span>  *  myHouse  = [ houseOfMM   <span class="keyword">copy</span> ];</div></pre></td></tr></table></figure></p>
+<p>此时会在堆上重新开辟一段内存存放@’北京别墅房’,比如0X1122,<br>内容为@’北京别墅房’,同时会在栈上为myHouse分配空间,比如地址:0XAACC,内容为0X1122,<br>因此retainCount增加1供myHouse来管理0X1122这段内存.(两套@’北京别墅房’)</p>
+<p>注： ARC中的strong相当于非ARC中的retain，ARC来了以后多搞一把钥匙就strong了啦。</p>
+<p>看到这，或许有人会上文中对栈和堆的有些疑惑， 接下来是转一位大神很经典的谈栈和堆，来一起看看，更能理解上面的含义：</p>
+<p>一、预备知识—程序的内存分配</p>
+<p>一个由C/C++编译的程序占用的内存分为以下几个部分<br>1、栈区（stack）— 由编译器自动分配释放 ，存放函数的参数值，局部变量的值等。其 操作方式类似于数据结构中的栈。</p>
+<p>2、堆区（heap） — 一般由程序员分配释放， 若程序员不释放，程序结束时可能由OS回收 。注意它与数据结构中的堆是两回事，分配方式倒是类似于链表</p>
+<p>3、全局区（静态区）（static）—，全局变量和静态变量的存储是放在一块的，初始化的全局变量和静态变量在一块区域， 未初始化的全局变量和未初始化的静态变量在相邻的另 一块区域。 - 程结束后由系统释放。</p>
+<p>4、文字常量区 —常量字符串就是放在这里的。 程序结束后由系统释放</p>
+<p>5、程序代码区—存放函数体的二进制代码。</p>
+<p>二、例子程序</p>
+<p>这是一个前辈写的，非常详细</p>
+<p>  //main.cpp<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span>   a   =   <span class="number">0</span>;   全局初始化区   </div><div class="line"><span class="keyword">char</span>   *p1;   全局未初始化区   </div><div class="line">main()   </div><div class="line">&#123;   </div><div class="line"><span class="keyword">int</span>   b;   栈   </div><div class="line"><span class="keyword">char</span>   s[]   =   <span class="string">"abc"</span>;   栈   </div><div class="line"><span class="keyword">char</span>   *p2;   栈   </div><div class="line"><span class="keyword">char</span>   *p3   =   <span class="string">"123456"</span>;   <span class="number">123456</span>/<span class="number">0</span>在常量区，p3在栈上。   </div><div class="line"><span class="keyword">static</span>   <span class="keyword">int</span>   c   =<span class="number">0</span>；   全局（静态）初始化区   </div><div class="line">p1   =   (<span class="keyword">char</span>   *)malloc(<span class="number">10</span>);   </div><div class="line">p2   =   (<span class="keyword">char</span>   *)malloc(<span class="number">20</span>);   </div><div class="line">分配得来得<span class="number">10</span>和<span class="number">20</span>字节的区域就在堆区。   </div><div class="line">strcpy(p1,   <span class="string">"123456"</span>);   <span class="number">123456</span>/<span class="number">0</span>放在常量区，编译器可能会将它与p3所指向的<span class="string">"123456"</span> </div><div class="line">优化成一个地方。   </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>三、堆和栈的理论知识</p>
+<p>2.1申请方式</p>
+<p>stack:<br>由系统自动分配。 例如，声明在函数中一个局部变量 int b; 系统自动在栈中为b开辟空间<br>heap:<br>需要程序员自己申请，并指明大小，在c中malloc函数<br>如p1 = (char *)malloc(10);<br>在C++中用new运算符<br>如p2 = new char[10];<br>但是注意p1、p2本身是在栈中的。</p>
+<p>2.2 申请后系统的响应</p>
+<p>栈：只要栈的剩余空间大于所申请空间，系统将为程序提供内存，否则将报异常提示栈溢 出。<br>堆：首先应该知道操作系统有一个记录空闲内存地址的链表，当系统收到程序的申请时， 会遍历该链表，寻找第一个空间大于所申请空间的堆结点，然后将该结点从空闲结点链表 中删除，并将该结点的空间分配给程序，另外，对于大多数系统，会在这块内存空间中的 首地址处记录本次分配的大小，这样，代码中的delete语句才能正确的释放本内存空间。<br>另外，由于找到的堆结点的大小不一定正好等于申请的大小，系统会自动的将多余的那部分重新放入空闲链表中。</p>
+<p>2.3 申请大小的限制</p>
+<p>栈：在Windows下,栈是向低地址扩展的数据结构，是一块连续的内存的区域。这句话的意思是栈顶的地址和栈的最大容量是系统预先规定好的，在WINDOWS下，栈的大小是2M（也有 的说是1M，总之是一个编译时就确定的常数），如果申请的空间超过栈的剩余空间时，将 提示overflow。因此，能从栈获得的空间较小。</p>
+<p>堆：堆是向高地址扩展的数据结构，是不连续的内存区域。这是由于系统是用链表来存储 的空闲内存地址的，自然是不连续的，而链表的遍历方向是由低地址向高地址。堆的大小受限于计算机系统中有效的虚拟内存。由此可见，堆获得的空间比较灵活，也比较大。</p>
+<p>2.4 申请效率的比较：</p>
+<p>栈由系统自动分配，速度较快。但程序员是无法控制的。<br>堆是由new分配的内存，一般速度比较慢，而且容易产生内存碎片,不过用起来最方便.<br>另外，在WINDOWS下，最好的方式是用VirtualAlloc分配内存，他不是在堆，也不是在栈是<br>直接在进程的地址空间中保留一块内存，虽然用起来最不方便。但是速度快，也最灵活。</p>
+<p>2.5 堆和栈中的存储内容</p>
+<p>栈： 在函数调用时，第一个进栈的是主函数中后的下一条指令（函数调用语句的下一条可<br>执行语句）的地址，然后是函数的各个参数，在大多数的C编译器中，参数是由右往左入栈<br>的，然后是函数中的局部变量。注意静态变量是不入栈的。<br>当本次函数调用结束后，局部变量先出栈，然后是参数，最后栈顶指针指向最开始存的地<br>址，也就是主函数中的下一条指令，程序由该点继续运行。<br>堆：一般是在堆的头部用一个字节存放堆的大小。堆中的具体内容由程序员安排。</p>
+<p>2.6存取效率的比较<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span>   s1[]   =   <span class="string">"aaaaaaaaaaaaaaa"</span>;   </div><div class="line"><span class="keyword">char</span>   *s2   =   <span class="string">"bbbbbbbbbbbbbbbbb"</span>;</div></pre></td></tr></table></figure></p>
+<p>aaaaaaaaaaa是在运行时刻赋值的；<br>而bbbbbbbbbbb是在编译时就确定的；<br>但是，在以后的存取中，在栈上的数组比指针所指向的字符串(例如堆)快。</p>
+<p>比如：</p>
+<pre><code class="obj-c"><span class="meta">#include   </span>
+<span class="keyword">void</span>   main()   
+{   
+<span class="keyword">char</span>   a   =   <span class="number">1</span>;   
+<span class="keyword">char</span>   c[]   =   <span class="string">"1234567890"</span>;   
+<span class="keyword">char</span>   *p   =<span class="string">"1234567890"</span>;   
+a   =   c[<span class="number">1</span>];   
+a   =   p[<span class="number">1</span>];   
+<span class="keyword">return</span>;   
+}
+</code></pre>
+<p>  对应的汇编代码<br>  10:   a   =   c[1];<br>  00401067   8A   4D   F1   mov   cl,byte   ptr   [ebp-0Fh]<br>  0040106A   88   4D   FC   mov   byte   ptr   [ebp-4],cl<br>  11:   a   =   p[1];<br>  0040106D   8B   55   EC   mov   edx,dword   ptr   [ebp-14h]<br>  00401070   8A   42   01   mov   al,byte   ptr   [edx+1]<br>  00401073   88   45   FC   mov   byte   ptr   [ebp-4],al<br>  第一种在读取时直接就把字符串中的元素读到寄存器cl中，而第二种则要先把指针值读到<br>  edx中，再根据edx读取字符，显然慢了。<br>2.7小结：</p>
+<p>堆和栈的区别可以用如下的比喻来看出：<br>使用栈就象我们去饭馆里吃饭，只管点菜（发出申请）、付钱、和吃（使用），吃饱了就走，不必理会切菜、洗菜等准备工作和洗碗、刷锅等扫尾工作，他的好处是快捷，但是自由度小。<br>使用堆就象是自己动手做喜欢吃的菜肴，比较麻烦，但是比较符合自己的口味，而且自由度大。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/07/ios中assign、copy-、retain、strong、weak的区别/" data-id="cj3xytx400006arfyzym7vl2w" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-OS中break、continue、return三者的区别" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/07/OS中break、continue、return三者的区别/" class="article-date">
+  <time datetime="2017-06-07T01:14:39.000Z" itemprop="datePublished">2017-06-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/07/OS中break、continue、return三者的区别/">OS中break、continue、return三者的区别</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><p>break         直接跳出当前层次的循环。 如果嵌套循环如for中嵌套while，break只能跳出内层的while循环，while不会退出for循环。 另外break用在if…else，switch等代码块中，可以跳出整个判断代码块，继续执行后面的代码。</p>
+</li>
+<li><p>continue      是终止本次循环(不要无谓的浪费)，但并不跳出整个循环， 而是继续往下判断循环条件，继续执行循环。     </p>
+</li>
+<li><p>return         return;用在if…else，switch等代码块中，可以跳出包含if…else，switch等代码块的整個method方法， 且method中return语句之后的所有代码不会被执行，直接跳回到调用该方法的代码位置。</p>
+</li>
+</ol>
+<ol>
+<li>return是會跳出整個method, break是跳出當前迴圈</li>
+</ol>
+<p>舉個簡單例子<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)test &#123;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++) &#123;</div><div class="line"><span class="keyword">if</span> (i==<span class="number">5</span>) &#123;</div><div class="line"><span class="keyword">break</span>;</div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"TEST"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>當i==5時, break會跳出for迴圈, 然後執行接下來的NSLog(@”TEST”);<br>如果把break改成return, 當i==5時, return是會跳出整個method, 也就是說NSLog(@”TEST”); 不會被執行。</p>
+<ol>
+<li>关于int main()函数中的return 0;</li>
+</ol>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</div><div class="line"></div><div class="line"><span class="keyword">@autoreleasepool</span> &#123;</div><div class="line"></div><div class="line"><span class="comment">// insert code here...</span></div><div class="line"></div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"Hello, World!"</span>);</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">return</span> <span class="number">0</span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>主函数int main()中返回return 0;告诉操作系统app应用程序是运行完所有代码正常退出，如果返回非0，则说明程序出了异常或崩溃引起的退出，代码未正常执行到return 0;语句。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/07/OS中break、continue、return三者的区别/" data-id="cj3xytx3k0000arfy1p2qkix3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-GCD" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/06/GCD/" class="article-date">
+  <time datetime="2017-06-06T05:33:32.000Z" itemprop="datePublished">2017-06-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/06/GCD/">GCD</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>文章目录</p>
+<p>GCD简介<br>任务和队列<br>GCD的使用步骤<br>队列的创建方法<br>任务的创建方法<br>GCD的基本使用<br>并发队列 + 同步执行<br>并发队列 + 异步执行<br>串行队列 + 同步执行<br>串行队列 + 异步执行<br>主队列 + 同步执行<br>主队列 + 异步执行<br>GCD线程之间的通讯<br>GCD的其他方法<br>GCD的栅栏方法dispatch_barrier_async<br>GCD的延时执行方法dispatch_after<br>GCD的一次性代码(只执行一次)dispatch_once<br>GCD的快速迭代方法dispatch_apply<br>GCD的队列组dispatch_group</p>
+<ol>
+<li>GCD简介</li>
+</ol>
+<p>什么是GCD呢？我们先来看看百度百科的解释简单了解下概念</p>
+<p>引自百度百科<br>Grand Central Dispatch (GCD) 是Apple开发的一个多核编程的较新的解决方法。它主要用于优化应用程序以支持多核处理器以及其他对称多处理系统。它是一个在线程池模式的基础上执行的并行任务。在Mac OS X 10.6雪豹中首次推出，也可在IOS 4及以上版本使用。<br>为什么要用GCD呢？</p>
+<p>因为GCD有很多好处啊，具体如下：</p>
+<p>GCD可用于多核的并行运算<br>GCD会自动利用更多的CPU内核（比如双核、四核）<br>GCD会自动管理线程的生命周期（创建线程、调度任务、销毁线程）<br>程序员只需要告诉GCD想要执行什么任务，不需要编写任何线程管理代码<br>既然GCD有这么多的好处，那么下面我们就来系统的学习一下GCD的使用方法。</p>
+<ol>
+<li>任务和队列</li>
+</ol>
+<p>学习GCD之前，先来了解GCD中两个核心概念：任务和队列。</p>
+<p>任务：就是执行操作的意思，换句话说就是你在线程中执行的那段代码。在GCD中是放在block中的。执行任务有两种方式：同步执行和异步执行。两者的主要区别是：是否具备开启新线程的能力。</p>
+<p>同步执行（sync）：只能在当前线程中执行任务，不具备开启新线程的能力<br>异步执行（async）：可以在新的线程中执行任务，具备开启新线程的能力<br>队列：这里的队列指任务队列，即用来存放任务的队列。队列是一种特殊的线性表，采用FIFO（先进先出）的原则，即新任务总是被插入到队列的末尾，而读取任务的时候总是从队列的头部开始读取。每读取一个任务，则从队列中释放一个任务。在GCD中有两种队列：串行队列和并发队列。</p>
+<p>并发队列（Concurrent Dispatch Queue）：可以让多个任务并发（同时）执行（自动开启多个线程同时执行任务）<br>并发功能只有在异步（dispatch_async）函数下才有效<br>串行队列（Serial Dispatch Queue）：让任务一个接着一个地执行（一个任务执行完毕后，再执行下一个任务）</p>
+<ol>
+<li>GCD的使用步骤</li>
+</ol>
+<p>GCD的使用步骤其实很简单，只有两步。</p>
+<p>创建一个队列（串行队列或并发队列）<br>将任务添加到队列中，然后系统就会根据任务类型执行任务（同步执行或异步执行）<br>下边来看看队列的创建方法和任务的创建方法。</p>
+<ol>
+<li>队列的创建方法</li>
+</ol>
+<p>可以使用dispatch_queue_create来创建对象，需要传入两个参数，第一个参数表示队列的唯一标识符，用于DEBUG，可为空；第二个参数用来识别是串行队列还是并发队列。DISPATCH_QUEUE_SERIAL表示串行队列，DISPATCH_QUEUE_CONCURRENT表示并发队列。<br>// 串行队列的创建方法<br>dispatch_queue_t queue= dispatch_queue_create(“test.queue”, DISPATCH_QUEUE_SERIAL);<br>// 并发队列的创建方法<br>dispatch_queue_t queue= dispatch_queue_create(“test.queue”, DISPATCH_QUEUE_CONCURRENT);<br>对于并发队列，还可以使用dispatch_get_global_queue来创建全局并发队列。GCD默认提供了全局的并发队列，需要传入两个参数。第一个参数表示队列优先级，一般用DISPATCH_QUEUE_PRIORITY_DEFAULT。第二个参数暂时没用，用0即可。</p>
+<ol>
+<li>任务的创建方法<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 同步执行任务创建方法</span></div><div class="line"><span class="built_in">dispatch_sync</span>(queue, ^&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,[<span class="built_in">NSThread</span> currentThread]);    <span class="comment">// 这里放任务代码</span></div><div class="line">&#125;);</div><div class="line"><span class="comment">// 异步执行任务创建方法</span></div><div class="line"><span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,[<span class="built_in">NSThread</span> currentThread]);    <span class="comment">// 这里放任务代码</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>虽然使用GCD只需两步，但是既然我们有两种队列，两种任务执行方式，那么我们就有了四种不同的组合方式。这四种不同的组合方式是</p>
+<p>并发队列 + 同步执行<br>并发队列 + 异步执行<br>串行队列 + 同步执行<br>串行队列 + 异步执行<br>实际上，我们还有一种特殊队列是主队列，那样就有六种不同的组合方式了。</p>
+<p>主队列 + 同步执行<br>主队列 + 异步执行<br>那么这几种不同组合方式各有什么区别呢，这里为了方便，先上结果，再来讲解。为图省事，直接查看表格结果，然后可以跳过 4. GCD的基本使用 了。</p>
+<p>并发队列    串行队列    主队列<br>同步(sync)    没有开启新线程，串行执行任务    没有开启新线程，串行执行任务    没有开启新线程，串行执行任务<br>异步(async)    有开启新线程，并发执行任务    有开启新线程(1条)，串行执行任务    没有开启新线程，串行执行任务<br>下边我们来分别讲讲这几种不同的组合方式的使用方法。</p>
+<ol>
+<li>GCD的基本使用</li>
+</ol>
+<p>先来讲讲并发队列的两种使用方法。</p>
+<ol>
+<li>并发队列 + 同步执行</li>
+</ol>
+<p>不会开启新线程，执行完一个任务，再执行下一个任务<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>) syncConcurrent</div><div class="line">&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"syncConcurrent---begin"</span>);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue= dispatch_queue_create(<span class="string">"test.queue"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_sync</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_sync</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"2------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_sync</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"3------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"syncConcurrent---end"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出结果：<br>2016-09-03 19:22:27.577 GCD[11557:1897538] syncConcurrent—begin<br>2016-09-03 19:22:27.578 GCD[11557:1897538] 1——<nsthread: 0x7f82a1d058b0="">{number = 1, name = main}<br>2016-09-03 19:22:27.578 GCD[11557:1897538] 1——<nsthread: 0x7f82a1d058b0="">{number = 1, name = main}<br>2016-09-03 19:22:27.578 GCD[11557:1897538] 2——<nsthread: 0x7f82a1d058b0="">{number = 1, name = main}<br>2016-09-03 19:22:27.579 GCD[11557:1897538] 2——<nsthread: 0x7f82a1d058b0="">{number = 1, name = main}<br>2016-09-03 19:22:27.579 GCD[11557:1897538] 3——<nsthread: 0x7f82a1d058b0="">{number = 1, name = main}<br>2016-09-03 19:22:27.579 GCD[11557:1897538] 3——<nsthread: 0x7f82a1d058b0="">{number = 1, name = main}<br>2016-09-03 19:22:27.579 GCD[11557:1897538] syncConcurrent—end<br>从并发队列 + 同步执行中可以看到，所有任务都是在主线程中执行的。由于只有一个线程，所以任务只能一个一个执行。<br>同时我们还可以看到，所有任务都在打印的syncConcurrent—begin和syncConcurrent—end之间，这说明任务是添加到队列中马上执行的。</nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></p>
+<ol>
+<li>并发队列 + 异步执行</li>
+</ol>
+<p>可同时开启多线程，任务交替执行<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>) asyncConcurrent</div><div class="line">&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"asyncConcurrent---begin"</span>);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue= dispatch_queue_create(<span class="string">"test.queue"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"2------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"3------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"asyncConcurrent---end"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出结果：<br>2016-09-03 19:27:31.503 GCD[11595:1901548] asyncConcurrent—begin<br>2016-09-03 19:27:31.504 GCD[11595:1901548] asyncConcurrent—end<br>2016-09-03 19:27:31.504 GCD[11595:1901626] 1——<nsthread: 0x7f8309c22080="">{number = 2, name = (null)}<br>2016-09-03 19:27:31.504 GCD[11595:1901625] 2——<nsthread: 0x7f8309f0b790="">{number = 4, name = (null)}<br>2016-09-03 19:27:31.504 GCD[11595:1901855] 3——<nsthread: 0x7f8309e1a950="">{number = 3, name = (null)}<br>2016-09-03 19:27:31.504 GCD[11595:1901626] 1——<nsthread: 0x7f8309c22080="">{number = 2, name = (null)}<br>2016-09-03 19:27:31.504 GCD[11595:1901625] 2——<nsthread: 0x7f8309f0b790="">{number = 4, name = (null)}<br>2016-09-03 19:27:31.505 GCD[11595:1901855] 3——<nsthread: 0x7f8309e1a950="">{number = 3, name = (null)}<br>在并发队列 + 异步执行中可以看出，除了主线程，又开启了3个线程，并且任务是交替着同时执行的。<br>另一方面可以看出，所有任务是在打印的syncConcurrent—begin和syncConcurrent—end之后才开始执行的。说明任务不是马上执行，而是将所有任务添加到队列之后才开始异步执行。<br>接下来再来讲讲串行队列的执行方法。</nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></p>
+<ol>
+<li>串行队列 + 同步执行</li>
+</ol>
+<p>不会开启新线程，在当前线程执行任务。任务是串行的，执行完一个任务，再执行下一个任务<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>) syncSerial</div><div class="line">&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"syncSerial---begin"</span>);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_queue_create(<span class="string">"test.queue"</span>, DISPATCH_QUEUE_SERIAL);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_sync</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);    </div><div class="line">    <span class="built_in">dispatch_sync</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"2------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_sync</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"3------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"syncSerial---end"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出结果为：<br>2016-09-03 19:29:00.066 GCD[11622:1903904] syncSerial—begin<br>2016-09-03 19:29:00.067 GCD[11622:1903904] 1——<nsthread: 0x7fa2e9f00980="">{number = 1, name = main}<br>2016-09-03 19:29:00.067 GCD[11622:1903904] 1——<nsthread: 0x7fa2e9f00980="">{number = 1, name = main}<br>2016-09-03 19:29:00.067 GCD[11622:1903904] 2——<nsthread: 0x7fa2e9f00980="">{number = 1, name = main}<br>2016-09-03 19:29:00.067 GCD[11622:1903904] 2——<nsthread: 0x7fa2e9f00980="">{number = 1, name = main}<br>2016-09-03 19:29:00.067 GCD[11622:1903904] 3——<nsthread: 0x7fa2e9f00980="">{number = 1, name = main}<br>2016-09-03 19:29:00.068 GCD[11622:1903904] 3——<nsthread: 0x7fa2e9f00980="">{number = 1, name = main}<br>2016-09-03 19:29:00.068 GCD[11622:1903904] syncSerial—end<br>在串行队列 + 同步执行可以看到，所有任务都是在主线程中执行的，并没有开启新的线程。而且由于串行队列，所以按顺序一个一个执行。<br>同时我们还可以看到，所有任务都在打印的syncConcurrent—begin和syncConcurrent—end之间，这说明任务是添加到队列中马上执行的。</nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></p>
+<ol>
+<li>串行队列 + 异步执行</li>
+</ol>
+<p>会开启新线程，但是因为任务是串行的，执行完一个任务，再执行下一个任务<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>) asyncSerial</div><div class="line">&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"asyncSerial---begin"</span>);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_queue_create(<span class="string">"test.queue"</span>, DISPATCH_QUEUE_SERIAL);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);    </div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"2------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"3------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"asyncSerial---end"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出结果为：<br>2016-09-03 19:30:08.363 GCD[11648:1905817] asyncSerial—begin<br>2016-09-03 19:30:08.364 GCD[11648:1905817] asyncSerial—end<br>2016-09-03 19:30:08.364 GCD[11648:1905895] 1——<nsthread: 0x7fb548c0e390="">{number = 2, name = (null)}<br>2016-09-03 19:30:08.364 GCD[11648:1905895] 1——<nsthread: 0x7fb548c0e390="">{number = 2, name = (null)}<br>2016-09-03 19:30:08.364 GCD[11648:1905895] 2——<nsthread: 0x7fb548c0e390="">{number = 2, name = (null)}<br>2016-09-03 19:30:08.364 GCD[11648:1905895] 2——<nsthread: 0x7fb548c0e390="">{number = 2, name = (null)}<br>2016-09-03 19:30:08.365 GCD[11648:1905895] 3——<nsthread: 0x7fb548c0e390="">{number = 2, name = (null)}<br>2016-09-03 19:30:08.365 GCD[11648:1905895] 3——<nsthread: 0x7fb548c0e390="">{number = 2, name = (null)}<br>在串行队列 + 异步执行可以看到，开启了一条新线程，但是任务还是串行，所以任务是一个一个执行。<br>另一方面可以看出，所有任务是在打印的syncConcurrent—begin和syncConcurrent—end之后才开始执行的。说明任务不是马上执行，而是将所有任务添加到队列之后才开始同步执行。<br>下边讲讲刚才我们提到过的特殊队列——主队列。</nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></p>
+<p>主队列：GCD自带的一种特殊的串行队列<br>所有放在主队列中的任务，都会放到主线程中执行<br>可使用dispatch_get_main_queue()获得主队列<br>我们再来看看主队列的两种组合方式。</p>
+<ol>
+<li>主队列 + 同步执行</li>
+</ol>
+<p>互等卡住不可行(在主线程中调用)<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)syncMain</div><div class="line">&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"syncMain---begin"</span>);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_main_queue();</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_sync</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_sync</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"2------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_sync</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"3------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);   </div><div class="line"></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"syncMain---end"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出结果<br>2016-09-03 19:32:15.356 GCD[11670:1908306] syncMain—begin<br>这时候，我们惊奇的发现，在主线程中使用主队列 + 同步执行，任务不再执行了，而且syncMain—end也没有打印。这是为什么呢？</p>
+<p>这是因为我们在主线程中执行这段代码。我们把任务放到了主队列中，也就是放到了主线程的队列中。而同步执行有个特点，就是对于任务是立马执行的。那么当我们把第一个任务放进主队列中，它就会立马执行。但是主线程现在正在处理syncMain方法，所以任务需要等syncMain执行完才能执行。而syncMain执行到第一个任务的时候，又要等第一个任务执行完才能往下执行第二个和第三个任务。</p>
+<p>那么，现在的情况就是syncMain方法和第一个任务都在等对方执行完毕。这样大家互相等待，所以就卡住了，所以我们的任务执行不了，而且syncMain—end也没有打印。</p>
+<p>要是如果不再主线程中调用，而在其他线程中调用会如何呢？</p>
+<p>不会开启新线程，执行完一个任务，再执行下一个任务（在其他线程中调用）<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">dispatch_queue_t</span> queue = dispatch_queue_create(<span class="string">"test.queue"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line"></div><div class="line"><span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">    [<span class="keyword">self</span> syncMain];</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出结果：<br>2016-09-03 19:32:45.496 GCD[11686:1909617] syncMain—begin<br>2016-09-03 19:32:45.497 GCD[11686:1909374] 1——<nsthread: 0x7faef2f01600="">{number = 1, name = main}<br>2016-09-03 19:32:45.498 GCD[11686:1909374] 1——<nsthread: 0x7faef2f01600="">{number = 1, name = main}<br>2016-09-03 19:32:45.498 GCD[11686:1909374] 2——<nsthread: 0x7faef2f01600="">{number = 1, name = main}<br>2016-09-03 19:32:45.498 GCD[11686:1909374] 2——<nsthread: 0x7faef2f01600="">{number = 1, name = main}<br>2016-09-03 19:32:45.499 GCD[11686:1909374] 3——<nsthread: 0x7faef2f01600="">{number = 1, name = main}<br>2016-09-03 19:32:45.499 GCD[11686:1909374] 3——<nsthread: 0x7faef2f01600="">{number = 1, name = main}<br>2016-09-03 19:32:45.499 GCD[11686:1909617] syncMain—end<br>在其他线程中使用主队列 + 同步执行可看到：所有任务都是在主线程中执行的，并没有开启新的线程。而且由于主队列是串行队列，所以按顺序一个一个执行。<br>同时我们还可以看到，所有任务都在打印的syncConcurrent—begin和syncConcurrent—end之间，这说明任务是添加到队列中马上执行的。</nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></p>
+<ol>
+<li>主队列 + 异步执行</li>
+</ol>
+<p>只在主线程中执行任务，执行完一个任务，再执行下一个任务<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)asyncMain</div><div class="line">&#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"asyncMain---begin"</span>);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_main_queue();</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);    </div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"2------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"3------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;</div><div class="line">    &#125;);  </div><div class="line"></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"asyncMain---end"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出结果：<br>2016-09-03 19:33:54.995 GCD[11706:1911313] asyncMain—begin<br>2016-09-03 19:33:54.996 GCD[11706:1911313] asyncMain—end<br>2016-09-03 19:33:54.996 GCD[11706:1911313] 1——<nsthread: 0x7fb623d015e0="">{number = 1, name = main}<br>2016-09-03 19:33:54.997 GCD[11706:1911313] 1——<nsthread: 0x7fb623d015e0="">{number = 1, name = main}<br>2016-09-03 19:33:54.997 GCD[11706:1911313] 2——<nsthread: 0x7fb623d015e0="">{number = 1, name = main}<br>2016-09-03 19:33:54.997 GCD[11706:1911313] 2——<nsthread: 0x7fb623d015e0="">{number = 1, name = main}<br>2016-09-03 19:33:54.997 GCD[11706:1911313] 3——<nsthread: 0x7fb623d015e0="">{number = 1, name = main}<br>2016-09-03 19:33:54.997 GCD[11706:1911313] 3——<nsthread: 0x7fb623d015e0="">{number = 1, name = main}<br>我们发现所有任务都在主线程中，虽然是异步执行，具备开启线程的能力，但因为是主队列，所以所有任务都在主线程中，并且一个接一个执行。<br>另一方面可以看出，所有任务是在打印的syncConcurrent—begin和syncConcurrent—end之后才开始执行的。说明任务不是马上执行，而是将所有任务添加到队列之后才开始同步执行。<br>弄懂了难理解、绕来绕去的队列+任务之后，我们来学习一个简单的东西——GCD线程之间的通讯。</nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></p>
+<ol>
+<li>GCD线程之间的通讯</li>
+</ol>
+<p>在iOS开发过程中，我们一般在主线程里边进行UI刷新，例如：点击、滚动、拖拽等事件。我们通常把一些耗时的操作放在其他线程，比如说图片下载、文件上传等耗时操作。而当我们有时候在其他线程完成了耗时操作时，需要回到主线程，那么就用到了线程之间的通讯。<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; ++i) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 回到主线程</span></div><div class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2-------%@"</span>,[<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出结果：<br>2016-09-03 19:34:59.165 GCD[11728:1913039] 1——<nsthread: 0x7f8319c06820="">{number = 2, name = (null)}<br>2016-09-03 19:34:59.166 GCD[11728:1913039] 1——<nsthread: 0x7f8319c06820="">{number = 2, name = (null)}<br>2016-09-03 19:34:59.166 GCD[11728:1912961] 2——-<nsthread: 0x7f8319e00560="">{number = 1, name = main}<br>可以看到在其他线程中先执行操作，执行完了之后回到主线程执行主线程的相应操作。</nsthread:></nsthread:></nsthread:></p>
+<ol>
+<li><p>GCD的其他方法</p>
+</li>
+<li><p>GCD的栅栏方法 dispatch_barrier_async</p>
+</li>
+</ol>
+<p>我们有时需要异步执行两组操作，而且第一组操作执行完之后，才能开始执行第二组操作。这样我们就需要一个相当于栅栏一样的一个方法将两组异步执行的操作组给分割起来，当然这里的操作组里可以包含一个或多个任务。这就需要用到dispatch_barrier_async方法在两个操作组间形成栅栏。<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)barrier</div><div class="line">&#123;</div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_queue_create(<span class="string">"12312312"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"----1-----%@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"----2-----%@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    dispatch_barrier_async(queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"----barrier-----%@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"----3-----%@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"----4-----%@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>输出结果：<br>2016-09-03 19:35:51.271 GCD[11750:1914724] —-1—–<nsthread: 0x7fb1826047b0="">{number = 2, name = (null)}<br>2016-09-03 19:35:51.272 GCD[11750:1914722] —-2—–<nsthread: 0x7fb182423fd0="">{number = 3, name = (null)}<br>2016-09-03 19:35:51.272 GCD[11750:1914722] —-barrier—–<nsthread: 0x7fb182423fd0="">{number = 3, name = (null)}<br>2016-09-03 19:35:51.273 GCD[11750:1914722] —-3—–<nsthread: 0x7fb182423fd0="">{number = 3, name = (null)}<br>2016-09-03 19:35:51.273 GCD[11750:1914724] —-4—–<nsthread: 0x7fb1826047b0="">{number = 2, name = (null)}<br>可以看出在执行完栅栏前面的操作之后，才执行栅栏操作，最后再执行栅栏后边的操作。</nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></p>
+<ol>
+<li>GCD的延时执行方法 dispatch_after</li>
+</ol>
+<p>当我们需要延迟执行一段代码时，就需要用到GCD的dispatch_after方法。<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(<span class="number">2.0</span> * <span class="built_in">NSEC_PER_SEC</span>)), dispatch_get_main_queue(), ^&#123;</div><div class="line">    <span class="comment">// 2秒后异步执行这里的代码...</span></div><div class="line">   <span class="built_in">NSLog</span>(<span class="string">@"run-----"</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<ol>
+<li>GCD的一次性代码(只执行一次) dispatch_once</li>
+</ol>
+<p>我们在创建单例、或者有整个程序运行过程中只执行一次的代码时，我们就用到了GCD的dispatch_once方法。使用dispatch_once函数能保证某段代码在程序运行过程中只被执行1次。<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</div><div class="line"><span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</div><div class="line">    <span class="comment">// 只执行1次的代码(这里面默认是线程安全的)</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<ol>
+<li>GCD的快速迭代方法 dispatch_apply</li>
+</ol>
+<p>通常我们会用for循环遍历，但是GCD给我们提供了快速迭代的方法dispatch_apply，使我们可以同时遍历。比如说遍历0~5这6个数字，for循环的做法是每次取出一个元素，逐个遍历。dispatch_apply可以同时遍历多个数字。<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>);</div><div class="line"></div><div class="line">dispatch_apply(<span class="number">6</span>, queue, ^(size_t index) &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%zd------%@"</span>,index, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>输出结果：<br>2016-09-03 19:37:02.250 GCD[11764:1915764] 1——<nsthread: 0x7fac9a7029e0="">{number = 1, name = main}<br>2016-09-03 19:37:02.250 GCD[11764:1915885] 0——<nsthread: 0x7fac9a614bd0="">{number = 2, name = (null)}<br>2016-09-03 19:37:02.250 GCD[11764:1915886] 2——<nsthread: 0x7fac9a542b20="">{number = 3, name = (null)}<br>2016-09-03 19:37:02.251 GCD[11764:1915764] 4——<nsthread: 0x7fac9a7029e0="">{number = 1, name = main}<br>2016-09-03 19:37:02.250 GCD[11764:1915884] 3——<nsthread: 0x7fac9a76ca10="">{number = 4, name = (null)}<br>2016-09-03 19:37:02.251 GCD[11764:1915885] 5——<nsthread: 0x7fac9a614bd0="">{number = 2, name = (null)}<br>从输出结果中前边的时间中可以看出，几乎是同时遍历的。</nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></nsthread:></p>
+<ol>
+<li>GCD的队列组 dispatch_group</li>
+</ol>
+<p>有时候我们会有这样的需求：分别异步执行2个耗时操作，然后当2个耗时操作都执行完毕后再回到主线程执行操作。这时候我们可以用到GCD的队列组。<br>我们可以先把任务放到队列中，然后将队列放入队列组中。<br>调用队列组的dispatch_group_notify回到主线程执行操作。<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">dispatch_group_t group =  dispatch_group_create();</div><div class="line"></div><div class="line">dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</div><div class="line">    <span class="comment">// 执行1个耗时的异步操作</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line">dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</div><div class="line">    <span class="comment">// 执行1个耗时的异步操作</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line">dispatch_group_notify(group, dispatch_get_main_queue(), ^&#123;</div><div class="line">    <span class="comment">// 等前面的异步操作都执行完毕后，回到主线程...</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<hr>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)Dispatch_Group &#123;</div><div class="line">    <span class="built_in">dispatch_queue_t</span> quene = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>);</div><div class="line">    dispatch_group_t group = dispatch_group_create();</div><div class="line">    </div><div class="line">    <span class="comment">//出于其他线程中</span></div><div class="line">    dispatch_group_enter(group);</div><div class="line">    </div><div class="line">    dispatch_group_async(group, quene, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"block0"</span>);</div><div class="line">        dispatch_group_leave(group);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    dispatch_group_enter(group);</div><div class="line">    dispatch_group_async(group, quene, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"block1"</span>);</div><div class="line">        dispatch_group_leave(group);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="comment">//输出不定</span></div><div class="line">    <span class="comment">//第一个参数指定为要监听的group - 在group中的任务都执行完成后调用</span></div><div class="line">    dispatch_group_notify(group, quene, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"done"</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    dispatch_group_async(group, quene, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"block2"</span>);</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)Dispatch_Apply</div><div class="line">&#123;</div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_queue_create(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>);</div><div class="line">    dispatch_apply(<span class="number">10</span>, queue, ^(size_t index) &#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%zu"</span>,index);</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)Dispatch_OnceCode &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"dispatch_once执行之前"</span>);</div><div class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</div><div class="line">    <span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"执行一次？"</span>);</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"dispath_once执行之后"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)Dispatch_AfterCode &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"dispatch_afterz执行之前"</span>);</div><div class="line">    <span class="comment">//延迟最起码3秒以上，因为这里block任务会在3秒后提交到主队列，block后面的代码先执行</span></div><div class="line">    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(<span class="number">3</span> * <span class="built_in">NSEC_PER_SEC</span>)), dispatch_get_main_queue(), ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"执行block代码"</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"dispathch_alfter执行之后"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">#pragma mark - Dispatchbarrier</span></div><div class="line"><span class="comment">//dispatch_barrier_sync在并发队列中</span></div><div class="line">- (<span class="keyword">void</span>)Dispatch_barrier_sync_inConcurrent_queueFunc &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_queue_t</span> concurrent_queue = dispatch_queue_create(<span class="string">"dee"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index&lt;<span class="number">5</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_async</span>(concurrent_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"index is %d"</span>,index);</div><div class="line">              <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    dispatch_barrier_sync(concurrent_queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"barrier_sync Action...."</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">5</span>; index&lt;<span class="number">10</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_async</span>(concurrent_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"index is %d"</span>,index);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"><span class="comment">//dispatch_barrier_async在并发队列中</span></div><div class="line">- (<span class="keyword">void</span>)Dispatch_barrier_async_inConcurrent_queueFunc &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_queue_t</span> concurrent_queue = dispatch_queue_create(<span class="string">"dee"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index&lt;<span class="number">5</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_async</span>(concurrent_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"index is %d"</span>,index);</div><div class="line">              <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    dispatch_barrier_async(concurrent_queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"barrier_async Action...."</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">5</span>; index&lt;<span class="number">10</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_async</span>(concurrent_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"index is %d"</span>,index);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"><span class="comment">//dispatch_barrier_sync在串行队列中</span></div><div class="line">- (<span class="keyword">void</span>)Dispatch_barrier_sync_inSerial_queueFunc &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_queue_t</span> serial_queue = dispatch_queue_create(<span class="string">"dee"</span>, DISPATCH_QUEUE_SERIAL);</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index&lt;<span class="number">5</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_async</span>(serial_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"index is %d"</span>,index);</div><div class="line">              <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    dispatch_barrier_sync(serial_queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"barrier_sync Action...."</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">5</span>; index&lt;<span class="number">10</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_async</span>(serial_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"index is %d"</span>,index);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"><span class="comment">//dispatch_barrier_async在串行队列中</span></div><div class="line">- (<span class="keyword">void</span>)Dispatch_barrier_async_inSerial_queueFunc &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_queue_t</span> serial_queue = dispatch_queue_create(<span class="string">"dee"</span>, DISPATCH_QUEUE_SERIAL);</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index&lt;<span class="number">5</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_async</span>(serial_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"index is %d"</span>,index);</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@" ------ %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    dispatch_barrier_async(serial_queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"barrier_async Action...."</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">5</span>; index&lt;<span class="number">10</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_async</span>(serial_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"index is %d"</span>,index);</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@" ------ %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">#pragma mark - 串行 和 并发</span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)Serial_AsyncFunc &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    <span class="built_in">dispatch_queue_t</span> serail_queue = dispatch_queue_create(<span class="string">"dee"</span>, DISPATCH_QUEUE_SERIAL);</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index&lt;<span class="number">10</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_async</span>(serail_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)Concurrent_AsyncFunc &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    <span class="built_in">dispatch_queue_t</span> concurrent_queue = dispatch_queue_create(<span class="string">"dee"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index&lt;<span class="number">10</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_async</span>(concurrent_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)Searil_SyncFunc &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    <span class="built_in">dispatch_queue_t</span> serail_queue = dispatch_queue_create(<span class="string">"dee"</span>, DISPATCH_QUEUE_SERIAL);</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index&lt;<span class="number">10</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_sync</span>(serail_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)Concurrent_SyncFunc &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    <span class="built_in">dispatch_queue_t</span> serail_queue = dispatch_queue_create(<span class="string">"dee"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index&lt;<span class="number">10</span>; index++) &#123;</div><div class="line">        <span class="built_in">dispatch_sync</span>(serail_queue, ^&#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"><span class="meta">#pragma mark - 同步 和 异步</span></div><div class="line"><span class="comment">//同步分发 - 串行队列</span></div><div class="line">- (<span class="keyword">void</span>)Dispatch_SyncCode &#123;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前----🙋---"</span>);</div><div class="line">    <span class="built_in">dispatch_queue_t</span> seril_queue = dispatch_queue_create(<span class="string">"dee"</span>, DISPATCH_QUEUE_SERIAL);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_sync</span>(seril_queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2----执行中..."</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"current thread is %@"</span>, [<span class="built_in">NSThread</span> currentThread]);</div><div class="line">        [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">2.0</span>];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"3----执行结束..."</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//异步分发 - 并发队列</span></div><div class="line">- (<span class="keyword">void</span>)Dispatch_AsyncCode &#123;</div><div class="line"></div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2----执行中..."</span>);</div><div class="line">        [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">2.0</span>];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"3----执行结束..."</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//异步分发 - 串行队列</span></div><div class="line">- (<span class="keyword">void</span>)Dispatch_AsynCode1 &#123;</div><div class="line">    </div><div class="line">    </div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    <span class="built_in">dispatch_queue_t</span> seril_queue = dispatch_queue_create(<span class="string">"dee"</span>, DISPATCH_QUEUE_SERIAL);</div><div class="line">    <span class="built_in">dispatch_async</span>(seril_queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2----执行中..."</span>);</div><div class="line">        [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">2.0</span>];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"3----执行结束..."</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//同步分发 - 并发队列</span></div><div class="line">- (<span class="keyword">void</span>)Dispatch_SyncCode1 &#123;</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"1----block执行之前-------"</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_sync</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2----执行中..."</span>);</div><div class="line">        [<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">2.0</span>];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"3----执行结束..."</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"4----block完成之后-------"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/06/GCD/" data-id="cj3xytx3u0004arfydjwokxx1" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Foundation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/05/Foundation/" class="article-date">
+  <time datetime="2017-06-05T09:14:53.000Z" itemprop="datePublished">2017-06-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/05/Foundation/">Foundation</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://www.cnblogs.com/kenshincui/p/3885689.html" target="_blank" rel="external">iOS开发系列—Objective-C之Foundation框架</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">Foundation.h</div><div class="line">FoundationErrors.h</div><div class="line">FoundationLegacySwiftCompatibility.h</div><div class="line">NSArray.h</div><div class="line">NSAttributedString.h</div><div class="line">NSAutoreleasePool.h</div><div class="line">NSBundle.h</div><div class="line">NSByteCountFormatter.h</div><div class="line">NSByteOrder.h</div><div class="line">NSCache.h</div><div class="line">NSCalendar.h</div><div class="line">NSCharacterSet.h</div><div class="line">NSCoder.h</div><div class="line">NSComparisonPredicate.h</div><div class="line">NSCompoundPredicate.h</div><div class="line">NSData.h</div><div class="line">NSDate.h</div><div class="line">NSDateComponentsFormatter.h</div><div class="line">NSDateFormatter.h</div><div class="line">NSDateInterval.h</div><div class="line">NSDateIntervalFormatter.h</div><div class="line">NSDecimal.h</div><div class="line">NSDecimalNumber.h</div><div class="line">NSDictionary.h</div><div class="line">NSEnergyFormatter.h</div><div class="line">NSEnumerator.h</div><div class="line">NSError.h</div><div class="line">NSException.h</div><div class="line">NSExpression.h</div><div class="line">NSExtensionContext.h</div><div class="line">NSExtensionItem.h</div><div class="line">NSExtensionRequestHandling.h</div><div class="line">NSFileCoordinator.h</div><div class="line">NSFileHandle.h</div><div class="line">NSFileManager.h</div><div class="line">NSFilePresenter.h</div><div class="line">NSFileVersion.h</div><div class="line">NSFileWrapper.h</div><div class="line">NSFormatter.h</div><div class="line">NSHashTable.h</div><div class="line">NSHTTPCookie.h</div><div class="line">NSHTTPCookieStorage.h</div><div class="line">NSIndexPath.h</div><div class="line">NSIndexSet.h</div><div class="line">NSInvocation.h</div><div class="line">NSISO8601DateFormatter.h</div><div class="line">NSItemProvider.h</div><div class="line">NSJSONSerialization.h</div><div class="line">NSKeyedArchiver.h</div><div class="line">NSKeyValueCoding.h</div><div class="line">NSKeyValueObserving.h</div><div class="line">NSLengthFormatter.h</div><div class="line">NSLinguisticTagger.h</div><div class="line">NSLocale.h</div><div class="line">NSLock.h</div><div class="line">NSMapTable.h</div><div class="line">NSMassFormatter.h</div><div class="line">NSMeasurement.h</div><div class="line">NSMeasurementFormatter.h</div><div class="line">NSMetadata.h</div><div class="line">NSMetadataAttributes.h</div><div class="line">NSMethodSignature.h</div><div class="line">NSNetServices.h</div><div class="line">NSNotification.h</div><div class="line">NSNotificationQueue.h</div><div class="line">NSNull.h</div><div class="line">NSNumberFormatter.h</div><div class="line">NSObjCRuntime.h</div><div class="line">NSObject.h</div><div class="line">NSOperation.h</div><div class="line">NSOrderedSet.h</div><div class="line">NSOrthography.h</div><div class="line">NSPathUtilities.h</div><div class="line">NSPersonNameComponents.h</div><div class="line">NSPersonNameComponentsFormatter.h</div><div class="line">NSPointerArray.h</div><div class="line">NSPointerFunctions.h</div><div class="line">NSPort.h</div><div class="line">NSPredicate.h</div><div class="line">NSProcessInfo.h</div><div class="line">NSProgress.h</div><div class="line">NSPropertyList.h</div><div class="line">NSProxy.h</div><div class="line">NSRange.h</div><div class="line">NSRegularExpression.h</div><div class="line">NSRunLoop.h</div><div class="line">NSScanner.h</div><div class="line">NSSet.h</div><div class="line">NSSortDescriptor.h</div><div class="line">NSStream.h</div><div class="line">NSString.h</div><div class="line">NSTextCheckingResult.h</div><div class="line">NSThread.h</div><div class="line">NSTimer.h</div><div class="line">NSTimeZone.h</div><div class="line">NSUbiquitousKeyValueStore.h</div><div class="line">NSUndoManager.h</div><div class="line">NSUnit.h</div><div class="line">NSURL.h</div><div class="line">NSURLAuthenticationChallenge.h</div><div class="line">NSURLCache.h</div><div class="line">NSURLConnection.h</div><div class="line">NSURLCredential.h</div><div class="line">NSURLCredentialStorage.h</div><div class="line">NSURLError.h</div><div class="line">NSURLProtectionSpace.h</div><div class="line">NSURLProtocol.h</div><div class="line">NSURLRequest.h</div><div class="line">NSURLResponse.h</div><div class="line">NSURLSession.h</div><div class="line">NSUserActivity.h</div><div class="line">NSUserDefaults.h</div><div class="line">NSUUID.h</div><div class="line">NSValue.h</div><div class="line">NSValueTransformer.h</div><div class="line">NSXMLParser.h</div><div class="line">NSZone.h</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/05/Foundation/" data-id="cj3xytx3o0001arfy19j70f8c" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/05/hello-world/" class="article-date">
+  <time datetime="2017-06-05T08:47:01.000Z" itemprop="datePublished">2017-06-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/05/hello-world/">Hello World</a>
     </h1>
   
 
@@ -96,7 +2546,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/06/15/hello-world/" data-id="cj3xyrewc00009ifye0zmedcq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/06/05/hello-world/" data-id="cj3xytx3x0005arfy5o5lkq71" class="article-share-link">Share</a>
       
       
     </footer>
@@ -136,7 +2586,23 @@
       <ul>
         
           <li>
-            <a href="/2017/06/15/hello-world/">Hello World</a>
+            <a href="/2017/06/14/沙盒文件以及沙盒文件路径、和本地存储/">沙盒文件以及沙盒文件路径、和本地存储</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/13/NSArray的基本使用/">NSArray的基本使用</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/13/Programmer-English-Vocabulary/">Programmer English Vocabulary</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/07/iOS-UIKit框架/">iOS UIKit框架</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/07/Technology-blog/">Technology blog</a>
           </li>
         
       </ul>

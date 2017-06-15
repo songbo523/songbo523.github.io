@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Foundation | songbook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="iOS开发系列—Objective-C之Foundation框架 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Foundation">
+<meta property="og:url" content="http://yoursite.com/2017/06/05/Foundation/index.html">
+<meta property="og:site_name" content="songbook">
+<meta property="og:description" content="iOS开发系列—Objective-C之Foundation框架 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788">
+<meta property="og:updated_time" content="2017-06-06T06:00:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Foundation">
+<meta name="twitter:description" content="iOS开发系列—Objective-C之Foundation框架 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788">
+  
+    <link rel="alternate" href="/atom.xml" title="songbook" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">songbook</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Foundation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/05/Foundation/" class="article-date">
+  <time datetime="2017-06-05T09:14:53.000Z" itemprop="datePublished">2017-06-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Foundation
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://www.cnblogs.com/kenshincui/p/3885689.html" target="_blank" rel="external">iOS开发系列—Objective-C之Foundation框架</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">Foundation.h</div><div class="line">FoundationErrors.h</div><div class="line">FoundationLegacySwiftCompatibility.h</div><div class="line">NSArray.h</div><div class="line">NSAttributedString.h</div><div class="line">NSAutoreleasePool.h</div><div class="line">NSBundle.h</div><div class="line">NSByteCountFormatter.h</div><div class="line">NSByteOrder.h</div><div class="line">NSCache.h</div><div class="line">NSCalendar.h</div><div class="line">NSCharacterSet.h</div><div class="line">NSCoder.h</div><div class="line">NSComparisonPredicate.h</div><div class="line">NSCompoundPredicate.h</div><div class="line">NSData.h</div><div class="line">NSDate.h</div><div class="line">NSDateComponentsFormatter.h</div><div class="line">NSDateFormatter.h</div><div class="line">NSDateInterval.h</div><div class="line">NSDateIntervalFormatter.h</div><div class="line">NSDecimal.h</div><div class="line">NSDecimalNumber.h</div><div class="line">NSDictionary.h</div><div class="line">NSEnergyFormatter.h</div><div class="line">NSEnumerator.h</div><div class="line">NSError.h</div><div class="line">NSException.h</div><div class="line">NSExpression.h</div><div class="line">NSExtensionContext.h</div><div class="line">NSExtensionItem.h</div><div class="line">NSExtensionRequestHandling.h</div><div class="line">NSFileCoordinator.h</div><div class="line">NSFileHandle.h</div><div class="line">NSFileManager.h</div><div class="line">NSFilePresenter.h</div><div class="line">NSFileVersion.h</div><div class="line">NSFileWrapper.h</div><div class="line">NSFormatter.h</div><div class="line">NSHashTable.h</div><div class="line">NSHTTPCookie.h</div><div class="line">NSHTTPCookieStorage.h</div><div class="line">NSIndexPath.h</div><div class="line">NSIndexSet.h</div><div class="line">NSInvocation.h</div><div class="line">NSISO8601DateFormatter.h</div><div class="line">NSItemProvider.h</div><div class="line">NSJSONSerialization.h</div><div class="line">NSKeyedArchiver.h</div><div class="line">NSKeyValueCoding.h</div><div class="line">NSKeyValueObserving.h</div><div class="line">NSLengthFormatter.h</div><div class="line">NSLinguisticTagger.h</div><div class="line">NSLocale.h</div><div class="line">NSLock.h</div><div class="line">NSMapTable.h</div><div class="line">NSMassFormatter.h</div><div class="line">NSMeasurement.h</div><div class="line">NSMeasurementFormatter.h</div><div class="line">NSMetadata.h</div><div class="line">NSMetadataAttributes.h</div><div class="line">NSMethodSignature.h</div><div class="line">NSNetServices.h</div><div class="line">NSNotification.h</div><div class="line">NSNotificationQueue.h</div><div class="line">NSNull.h</div><div class="line">NSNumberFormatter.h</div><div class="line">NSObjCRuntime.h</div><div class="line">NSObject.h</div><div class="line">NSOperation.h</div><div class="line">NSOrderedSet.h</div><div class="line">NSOrthography.h</div><div class="line">NSPathUtilities.h</div><div class="line">NSPersonNameComponents.h</div><div class="line">NSPersonNameComponentsFormatter.h</div><div class="line">NSPointerArray.h</div><div class="line">NSPointerFunctions.h</div><div class="line">NSPort.h</div><div class="line">NSPredicate.h</div><div class="line">NSProcessInfo.h</div><div class="line">NSProgress.h</div><div class="line">NSPropertyList.h</div><div class="line">NSProxy.h</div><div class="line">NSRange.h</div><div class="line">NSRegularExpression.h</div><div class="line">NSRunLoop.h</div><div class="line">NSScanner.h</div><div class="line">NSSet.h</div><div class="line">NSSortDescriptor.h</div><div class="line">NSStream.h</div><div class="line">NSString.h</div><div class="line">NSTextCheckingResult.h</div><div class="line">NSThread.h</div><div class="line">NSTimer.h</div><div class="line">NSTimeZone.h</div><div class="line">NSUbiquitousKeyValueStore.h</div><div class="line">NSUndoManager.h</div><div class="line">NSUnit.h</div><div class="line">NSURL.h</div><div class="line">NSURLAuthenticationChallenge.h</div><div class="line">NSURLCache.h</div><div class="line">NSURLConnection.h</div><div class="line">NSURLCredential.h</div><div class="line">NSURLCredentialStorage.h</div><div class="line">NSURLError.h</div><div class="line">NSURLProtectionSpace.h</div><div class="line">NSURLProtocol.h</div><div class="line">NSURLRequest.h</div><div class="line">NSURLResponse.h</div><div class="line">NSURLSession.h</div><div class="line">NSUserActivity.h</div><div class="line">NSUserDefaults.h</div><div class="line">NSUUID.h</div><div class="line">NSValue.h</div><div class="line">NSValueTransformer.h</div><div class="line">NSXMLParser.h</div><div class="line">NSZone.h</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/05/Foundation/" data-id="cj3xytx3o0001arfy19j70f8c" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/06/06/GCD/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          GCD
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/05/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/06/14/沙盒文件以及沙盒文件路径、和本地存储/">沙盒文件以及沙盒文件路径、和本地存储</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/13/NSArray的基本使用/">NSArray的基本使用</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/13/Programmer-English-Vocabulary/">Programmer English Vocabulary</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/07/iOS-UIKit框架/">iOS UIKit框架</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/07/Technology-blog/">Technology blog</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 songbo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

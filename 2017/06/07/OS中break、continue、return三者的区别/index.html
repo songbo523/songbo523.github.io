@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>OS中break、continue、return三者的区别 | songbook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="break         直接跳出当前层次的循环。 如果嵌套循环如for中嵌套while，break只能跳出内层的while循环，while不会退出for循环。 另外break用在if…else，switch等代码块中，可以跳出整个判断代码块，继续执行后面的代码。  continue      是终止本次循环(不要无谓的浪费)，但并不跳出整个循环， 而是继续往下判断循环条件，继续执行循环。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OS中break、continue、return三者的区别">
+<meta property="og:url" content="http://yoursite.com/2017/06/07/OS中break、continue、return三者的区别/index.html">
+<meta property="og:site_name" content="songbook">
+<meta property="og:description" content="break         直接跳出当前层次的循环。 如果嵌套循环如for中嵌套while，break只能跳出内层的while循环，while不会退出for循环。 另外break用在if…else，switch等代码块中，可以跳出整个判断代码块，继续执行后面的代码。  continue      是终止本次循环(不要无谓的浪费)，但并不跳出整个循环， 而是继续往下判断循环条件，继续执行循环。">
+<meta property="og:updated_time" content="2017-06-07T01:16:17.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OS中break、continue、return三者的区别">
+<meta name="twitter:description" content="break         直接跳出当前层次的循环。 如果嵌套循环如for中嵌套while，break只能跳出内层的while循环，while不会退出for循环。 另外break用在if…else，switch等代码块中，可以跳出整个判断代码块，继续执行后面的代码。  continue      是终止本次循环(不要无谓的浪费)，但并不跳出整个循环， 而是继续往下判断循环条件，继续执行循环。">
+  
+    <link rel="alternate" href="/atom.xml" title="songbook" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">songbook</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-OS中break、continue、return三者的区别" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/07/OS中break、continue、return三者的区别/" class="article-date">
+  <time datetime="2017-06-07T01:14:39.000Z" itemprop="datePublished">2017-06-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      OS中break、continue、return三者的区别
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><p>break         直接跳出当前层次的循环。 如果嵌套循环如for中嵌套while，break只能跳出内层的while循环，while不会退出for循环。 另外break用在if…else，switch等代码块中，可以跳出整个判断代码块，继续执行后面的代码。</p>
+</li>
+<li><p>continue      是终止本次循环(不要无谓的浪费)，但并不跳出整个循环， 而是继续往下判断循环条件，继续执行循环。     </p>
+</li>
+<li><p>return         return;用在if…else，switch等代码块中，可以跳出包含if…else，switch等代码块的整個method方法， 且method中return语句之后的所有代码不会被执行，直接跳回到调用该方法的代码位置。</p>
+</li>
+</ol>
+<ol>
+<li>return是會跳出整個method, break是跳出當前迴圈</li>
+</ol>
+<p>舉個簡單例子<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)test &#123;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++) &#123;</div><div class="line"><span class="keyword">if</span> (i==<span class="number">5</span>) &#123;</div><div class="line"><span class="keyword">break</span>;</div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"TEST"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>當i==5時, break會跳出for迴圈, 然後執行接下來的NSLog(@”TEST”);<br>如果把break改成return, 當i==5時, return是會跳出整個method, 也就是說NSLog(@”TEST”); 不會被執行。</p>
+<ol>
+<li>关于int main()函数中的return 0;</li>
+</ol>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</div><div class="line"></div><div class="line"><span class="keyword">@autoreleasepool</span> &#123;</div><div class="line"></div><div class="line"><span class="comment">// insert code here...</span></div><div class="line"></div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"Hello, World!"</span>);</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">return</span> <span class="number">0</span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>主函数int main()中返回return 0;告诉操作系统app应用程序是运行完所有代码正常退出，如果返回非0，则说明程序出了异常或崩溃引起的退出，代码未正常执行到return 0;语句。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/06/07/OS中break、continue、return三者的区别/" data-id="cj3xytx3k0000arfy1p2qkix3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/06/07/ios中assign、copy-、retain、strong、weak的区别/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ios中assign、copy 、retain、strong、weak的区别
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/06/GCD/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">GCD</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/06/14/沙盒文件以及沙盒文件路径、和本地存储/">沙盒文件以及沙盒文件路径、和本地存储</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/13/NSArray的基本使用/">NSArray的基本使用</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/13/Programmer-English-Vocabulary/">Programmer English Vocabulary</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/07/iOS-UIKit框架/">iOS UIKit框架</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/07/Technology-blog/">Technology blog</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 songbo<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
